@@ -1,10 +1,8 @@
 package me.tropicalfan344.musicbot.commands.impl;
 
-import com.google.gson.internal.Streams;
-import me.tropicalfan344.musicbot.StreamSendHander;
+import me.tropicalfan344.musicbot.StreamSendHandler;
 import me.tropicalfan344.musicbot.commands.MusicCommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 public class CommandLeave extends MusicCommand {
@@ -19,7 +17,7 @@ public class CommandLeave extends MusicCommand {
         }else {
             AudioManager audioManager = event.getGuild().getAudioManager();
             audioManager.closeAudioConnection();
-            StreamSendHander.setPaused(true);
+            StreamSendHandler.setPaused(true);
             event.getInteraction().reply("Successfully disconnected from <#" + event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).getVoiceState().getChannel().getId() + ">").queue();
         }
     }

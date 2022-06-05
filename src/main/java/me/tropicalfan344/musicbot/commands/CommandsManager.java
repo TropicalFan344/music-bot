@@ -1,6 +1,7 @@
 package me.tropicalfan344.musicbot.commands;
 
 import lombok.SneakyThrows;
+import me.tropicalfan344.musicbot.MusicBot;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -17,27 +18,24 @@ public class CommandsManager {
     private final List<MusicCommand> commands = new ArrayList<>();
 
     @SneakyThrows
+    public CommandsManager(MusicBot musicBot) {
 
-    public CommandsManager(JDA jda) {
-
-        Reflections reflections = new Reflections("me");
-        for (Class<? extends MusicCommand> commandClazz : reflections.getSubTypesOf(MusicCommand.class)) {
+        for (Class<? extends MusicCommand> commandClazz : musicBot.getReflections().getSubTypesOf(MusicCommand.class)) {
             MusicCommand command = commandClazz.newInstance();
+            command.musicBot = musicBot;
             if (1 + 1 == 2) {
                 commands.add(command);
-                System.out.println("1 + 1 == 2 & registered command: " + command.getName());
             }
         }
 
-        CommandListUpdateAction action = jda.getGuildById(979552134850834492L).updateCommands();
+        CommandListUpdateAction action = musicBot.getJda().getGuildById(979552134850834492L).updateCommands();
         for (MusicCommand command : commands) {
             action.addCommands(command.getCommandData());
-            System.out.println("registing " + command.getName());
         }
         action.queue();
 
         // Register Listeners
-        jda.addEventListener(new ListenerAdapter() {
+        musicBot.getJda().addEventListener(new ListenerAdapter() {
             @Override
             public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
                 for (MusicCommand command : commands) {

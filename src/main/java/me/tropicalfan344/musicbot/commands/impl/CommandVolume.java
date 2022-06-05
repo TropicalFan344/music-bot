@@ -1,6 +1,6 @@
 package me.tropicalfan344.musicbot.commands.impl;
 
-import me.tropicalfan344.musicbot.StreamSendHander;
+import me.tropicalfan344.musicbot.StreamSendHandler;
 import me.tropicalfan344.musicbot.commands.MusicCommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -13,7 +13,7 @@ public class CommandVolume extends MusicCommand {
 
     @Override
     public void onExecute(SlashCommandInteractionEvent event) {
-        StreamSendHander.volume = event.getOption("value").getAsInt();
+        StreamSendHandler.volume = event.getOption("value").getAsInt();
         event.getInteraction().reply("Successfully set the volume to: " + event.getOption("value").getAsInt() + "‰").queue();
     }
 }

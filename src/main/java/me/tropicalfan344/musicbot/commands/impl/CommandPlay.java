@@ -1,7 +1,7 @@
 package me.tropicalfan344.musicbot.commands.impl;
 
-import com.sun.nio.sctp.SendFailedNotification;
-import me.tropicalfan344.musicbot.StreamSendHander;
+import me.tropicalfan344.musicbot.GuildMusicManager;
+import me.tropicalfan344.musicbot.StreamSendHandler;
 import me.tropicalfan344.musicbot.commands.MusicCommand;
 import me.tropicalfan344.musicbot.engines.ISearchResult;
 import me.tropicalfan344.musicbot.engines.Track;
@@ -23,7 +23,7 @@ public class CommandPlay extends MusicCommand {
     @Override
     public void onExecute(SlashCommandInteractionEvent event) {
         if (!event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).getVoiceState().inAudioChannel()) {
-            event.getInteraction().reply("I am not in the VoiceChat, use /join to let me join your VoiceChat").queue();
+            event.getInteraction().reply("I am not in the voice channel, use /join to let me join your voice channel.").queue();
         }else {
             played = true;
             List<Track> queue = CommandQueue.queue;
@@ -32,29 +32,27 @@ public class CommandPlay extends MusicCommand {
             YouTubeEngine engine = new YouTubeEngine();
             ISearchResult result = engine.search(event.getOption("query").getAsString());
             List<Track> results = result.getResults();
-            for (Track track : results) {
-                System.out.println("Found: " + track.getTitle());
-            }
             final Track[] targetTrack = {results.get(0)};
             event.getInteraction().reply("> **Now Playing: **: " + targetTrack[0].getTitle() + " (" + targetTrack[0].getUrl() + ")").queue();
-            manager.setSendingHandler(new StreamSendHander(targetTrack[0].getPCMStream()));
-            StreamSendHander.setDone(false);
-            StreamSendHander.setPaused(false);
+            StreamSendHandler handler = new StreamSendHandler(targetTrack[0].getPCMStream(), GuildMusicManager.getMusicManager(event.getGuild()));
+            manager.setSendingHandler(handler);
+            StreamSendHandler.setDone(false);
+            StreamSendHandler.setPaused(false);
             queue.add(targetTrack[0]);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     while (true) {
-                        if (StreamSendHander.isDone() && queue.size() >= 2) {
+                        if (StreamSendHandler.isDone() && queue.size() >= 2) {
                             queue.remove(0);
                             targetTrack[0] = queue.get(0);
-                            StreamSendHander.setDone(false);
-                            StreamSendHander.setPaused(false);
+                            StreamSendHandler.setDone(false);
+                            StreamSendHandler.setPaused(false);
                             event.getChannel().sendMessage("> **Now Playing: **: " + targetTrack[0].getTitle() + " (" + targetTrack[0].getUrl() + ")").queue();
-                            manager.setSendingHandler(new StreamSendHander(targetTrack[0].getPCMStream()));
+                            manager.setSendingHandler(new StreamSendHandler(targetTrack[0].getPCMStream()));
                             played = true;
                         }
-                        if (StreamSendHander.isDone() && queue.size() == 1){
+                        if (StreamSendHandler.isDone() && queue.size() == 1){
                             queue.remove(0);
                             break;
                         }
