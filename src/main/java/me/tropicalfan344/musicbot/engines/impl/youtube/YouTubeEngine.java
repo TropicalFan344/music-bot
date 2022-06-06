@@ -16,6 +16,8 @@ import okhttp3.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class YouTubeEngine implements Engine {
     public static final String INNERTUBE_API_KEY = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
@@ -41,7 +43,13 @@ public class YouTubeEngine implements Engine {
 
     @Override
     public Track provide(String url) {
-        return null;
+        Pattern pattern = Pattern.compile("https?:\\/\\/(?:\\w*\\.)?youtube.com\\/watch\\?v=([\\w\\n\\-]{11})(&[\\w%]*=[\\w%]*)*");
+        Matcher matcher = pattern.matcher(url);
+        if (!matcher.find()) {
+            throw new IllegalStateException("Track could not be provided by this engine with URL: " + url);
+        }
+        String videoId = matcher.group(1);
+        return YouTubeTrack.getByVideoId(videoId);
     }
 
     public static JsonObject getContextIOS(String language, String location) {

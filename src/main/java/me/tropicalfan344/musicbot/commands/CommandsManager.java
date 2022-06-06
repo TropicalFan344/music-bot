@@ -2,13 +2,15 @@ package me.tropicalfan344.musicbot.commands;
 
 import lombok.SneakyThrows;
 import me.tropicalfan344.musicbot.MusicBot;
-import net.dv8tion.jda.api.JDA;
+import me.tropicalfan344.musicbot.commands.impl.CommandEffectsAdd;
+import me.tropicalfan344.musicbot.effects.AudioEffect;
+import me.tropicalfan344.musicbot.effects.AudioEffectsManager;
+import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
+import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.jetbrains.annotations.NotNull;
-import org.reflections.Reflections;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +23,15 @@ public class CommandsManager {
     public CommandsManager(MusicBot musicBot) {
 
         for (Class<? extends MusicCommand> commandClazz : musicBot.getReflections().getSubTypesOf(MusicCommand.class)) {
-            MusicCommand command = commandClazz.newInstance();
-            command.musicBot = musicBot;
-            if (1 + 1 == 2) {
+            try {
+                MusicCommand command = commandClazz.newInstance();
+                command.musicBot = musicBot;
                 commands.add(command);
-            }
+            } catch (Exception ignored) {}
+        }
+
+        for (Class<? extends AudioEffect> aClass : AudioEffectsManager.registry) {
+            commands.add(new CommandEffectsAdd(aClass.newInstance()));
         }
 
         CommandListUpdateAction action = musicBot.getJda().getGuildById(979552134850834492L).updateCommands();
@@ -43,7 +49,35 @@ public class CommandsManager {
                         try {
                             command.onExecute(event);
                         } catch (Throwable throwable) {
-                            event.getInteraction().reply("Something went wrong while handling the command! Error: " + throwable.getMessage());
+                            if (throwable instanceof CommandException) {
+                                try {
+                                    event.getInteraction().reply(new MessageBuilder(
+                                            SimpleEmbedGenerator.generateErrorEmbed(throwable.getMessage())
+                                    ).build()).queue();
+                                } catch (IllegalStateException e) {
+                                    e.printStackTrace();
+                                    if (e.getMessage().equals("This interaction has already been acknowledged or replied to. You can only reply or acknowledge an interaction once!")) {
+                                        event.getHook().editOriginal(new MessageBuilder(
+                                                SimpleEmbedGenerator.generateErrorEmbed(throwable.getMessage())
+                                        ).build()).queue();
+                                    }
+                                }
+                            } else {
+                                try {
+                                    event.getInteraction().reply(new MessageBuilder(
+                                            // TODO: Error report system
+                                            SimpleEmbedGenerator.generateErrorEmbed("Something went wrong while handling the command! Error: " + throwable.getMessage())
+                                    ).build()).queue();
+                                } catch (IllegalStateException e) {
+                                    e.printStackTrace();
+                                    if (e.getMessage().equals("This interaction has already been acknowledged or replied to. You can only reply or acknowledge an interaction once!")) {
+                                        event.getHook().editOriginal(new MessageBuilder(
+                                                // TODO: Error report system
+                                                SimpleEmbedGenerator.generateErrorEmbed("Something went wrong while handling the command! Error: " + throwable.getMessage())
+                                        ).build()).queue();
+                                    }
+                                }
+                            }
                         }
                         return;
                     }

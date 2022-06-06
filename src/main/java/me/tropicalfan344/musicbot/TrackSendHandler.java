@@ -4,15 +4,15 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import me.tropicalfan344.musicbot.effects.AudioEffect;
+import me.tropicalfan344.musicbot.engines.Track;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-public class StreamSendHandler implements AudioSendHandler, Closeable {
+public class TrackSendHandler implements AudioSendHandler, Closeable {
 
 
     private boolean closed = false;
@@ -22,8 +22,13 @@ public class StreamSendHandler implements AudioSendHandler, Closeable {
     private boolean paused = false;
 
     @Getter
+    private final Track track;
+
+    @Getter
     private final InputStream inputStream;
     private final GuildMusicManager musicManager;
+
+    private final Runnable onFinish;
 
     /**
      * Create an instance of stream send handler. Stream send handler reads the input stream, and send it back to JDA.
@@ -31,9 +36,11 @@ public class StreamSendHandler implements AudioSendHandler, Closeable {
      * The required audio data can be accessed via {@link AudioSendHandler#INPUT_FORMAT}
      * @param inputStream Raw input stream of PCM signed 16-bit big endian.
      */
-    public StreamSendHandler(InputStream inputStream, GuildMusicManager musicManager) {
-        this.inputStream = inputStream;
+    public TrackSendHandler(Track track, GuildMusicManager musicManager, Runnable onFinish) {
+        this.track = track;
+        this.inputStream = track.getPCMStream();
         this.musicManager = musicManager;
+        this.onFinish = onFinish;
     }
 
     @Override
@@ -57,19 +64,24 @@ public class StreamSendHandler implements AudioSendHandler, Closeable {
                 return null;
             }
             for (int i = 0; i < readBuffer.length; i+=2) {
-                int i1 = ((readBuffer[i] << 8) | (readBuffer[i+1] & 0xff)); // unsigned short
-                float value = i1 / 0xffff;
-                effectBuffer[i / 2] = value;
+                short i1 = (short) ((readBuffer[i] << 8) | (readBuffer[i+1] & 0xff)); // signed short
+                float data = i1 / 32767.0f;
+                if (data > 1) data = 1;
+                if (data < -1) data = -1;
+                effectBuffer[i / 2] = data;
             }
 
             for (AudioEffect effect : musicManager.getAudioEffectsManager().getEffects()) {
-                effect.process(effectBuffer);
+                effect.processAudio(effectBuffer);
             }
 
             for (int i = 0; i < effectBuffer.length; i++) {
-                int i1 = (int) effectBuffer[i] * 0xffff;
-                readBuffer[i+1] = ((byte) i1);
-                readBuffer[i] = (byte) (i1 >> 8);
+                float data = effectBuffer[i];
+                if (data > 1) data = 1;
+                if (data < -1) data = -1;
+                int i1 = (int) (data * 32767.0);
+                readBuffer[(i*2)+1] = ((byte) i1);
+                readBuffer[i*2] = (byte) (i1 >> 8);
             }
             buffer.put(readBuffer);
             buffer.flip();
@@ -84,8 +96,10 @@ public class StreamSendHandler implements AudioSendHandler, Closeable {
     }
 
     @Override
-    public void close() throws IOException {
+    @SneakyThrows
+    public void close() {
         inputStream.close();
         closed = true;
+        onFinish.run();
     }
 }

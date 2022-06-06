@@ -31,12 +31,12 @@ public class MusicBot {
         this.jda = JDABuilder
                 .createDefault(configManager.getConfig().token)
                 .build();
-        this.commandsManager = new CommandsManager(this);
-
 
         System.out.println("Preparing Bot...");
         jda.awaitReady();
         System.out.println("JDA has connected to Discord as user: " + jda.getSelfUser());
+
+        this.commandsManager = new CommandsManager(this);
     }
 
 }

@@ -1,12 +1,14 @@
 package me.tropicalfan344.musicbot.commands.impl;
 
+import me.tropicalfan344.musicbot.GuildMusicManager;
+import me.tropicalfan344.musicbot.commands.CommandException;
 import me.tropicalfan344.musicbot.commands.MusicCommand;
+import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.managers.AudioManager;
-
-import java.net.MulticastSocket;
 
 public class CommandJoin extends MusicCommand {
     public CommandJoin() {
@@ -15,13 +17,19 @@ public class CommandJoin extends MusicCommand {
 
     @Override
     public void onExecute(SlashCommandInteractionEvent event) {
-        if (!event.getMember().getVoiceState().inAudioChannel() && 2 + 2 == 4){
-            event.getInteraction().reply("You are not in the VC").queue();
-        }else {
-            VoiceChannel voiceChannel = ((VoiceChannel) event.getMember().getVoiceState().getChannel());
-            AudioManager audioManager = event.getGuild().getAudioManager();
-            audioManager.openAudioConnection(voiceChannel);
-            event.getInteraction().reply("Joined").queue();
+        GuildVoiceState selfVoiceState = event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).getVoiceState();
+        if (!event.getMember().getVoiceState().inAudioChannel()){
+            throw new CommandException("You are not in a voice channel right now!");
         }
+        if (selfVoiceState.inAudioChannel()) {
+            throw new CommandException("The bot is already in a voice channel! Please use /leave before letting it join another.");
+        }
+
+        VoiceChannel voiceChannel = ((VoiceChannel) event.getMember().getVoiceState().getChannel());
+        GuildMusicManager.getMusicManager(musicBot, event.getGuild()).joinVoiceChannel(voiceChannel);
+        event.getInteraction().reply(new MessageBuilder(SimpleEmbedGenerator.generateSuccessfulEmbed(
+                "Successfully joined " + voiceChannel.getAsMention()
+        )).build()).queue();
+
     }
 }

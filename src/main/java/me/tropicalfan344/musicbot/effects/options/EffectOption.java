@@ -50,7 +50,8 @@ public abstract class EffectOption<T> {
         return true;
     }
 
-    protected abstract T extractValue(CommandInteraction interaction);
+    public abstract T extractValue(CommandInteraction interaction);
+
 
     public MessageEmbed.Field getOptionDisplay() {
         return new MessageEmbed.Field(getName(), getDescription(), false);

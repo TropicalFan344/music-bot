@@ -3,7 +3,10 @@ package me.tropicalfan344.musicbot.effects.options.impl;
 import lombok.Getter;
 import me.tropicalfan344.musicbot.effects.options.EffectOption;
 import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+
+import java.util.function.Function;
 
 public class FloatOption extends EffectOption<Float> {
 
@@ -24,8 +27,8 @@ public class FloatOption extends EffectOption<Float> {
     }
 
     @Override
-    protected Float extractValue(CommandInteraction interaction) {
-        return (float) interaction.getOption(getName()).getAsDouble();
+    public Float extractValue(CommandInteraction interaction) {
+        return interaction.getOption(getName(), getDefaultValue(), optionMapping -> (float) optionMapping.getAsDouble());
     }
 
     @Override

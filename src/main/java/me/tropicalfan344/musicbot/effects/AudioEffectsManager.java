@@ -11,16 +11,22 @@ import java.util.Set;
 
 public class AudioEffectsManager {
 
+    public static final List<Class<? extends AudioEffect>> registry = new ArrayList<>();
+
+    static {
+        Reflections reflections = new Reflections(AudioEffectsManager.class.getPackage().getName());
+        Set<Class<? extends AudioEffect>> subTypesOf = reflections.getSubTypesOf(AudioEffect.class);
+        for (Class<? extends AudioEffect> aClass : subTypesOf) {
+            registry.add(aClass);
+        }
+    }
+
     @Getter
     private final List<AudioEffect> effects = new ArrayList<>();
 
     @SneakyThrows
     public AudioEffectsManager(MusicBot bot) {
-        Reflections reflections = bot.getReflections();
-        Set<Class<? extends AudioEffect>> subTypesOf = reflections.getSubTypesOf(AudioEffect.class);
-        for (Class<? extends AudioEffect> aClass : subTypesOf) {
-            effects.add(aClass.getConstructor().newInstance());
-        }
+
     }
 
 

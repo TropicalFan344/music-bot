@@ -17,7 +17,6 @@ public class Test {
         while (true) {
             int data = stream.read();
             if (data == -1) break;
-            System.out.write(data);
         }
         process.waitFor();
         AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(musicFile);

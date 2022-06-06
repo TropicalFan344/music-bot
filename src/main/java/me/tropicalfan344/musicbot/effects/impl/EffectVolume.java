@@ -9,7 +9,7 @@ public class EffectVolume extends AudioEffect {
     /**
      * Un-normalized
      */
-    private final FloatOption volume = new FloatOption("volume", "Volume. The value is un-normalized.", true, 100f, 1f, Float.POSITIVE_INFINITY);
+    public final FloatOption volume = new FloatOption("volume", "Volume. The value is un-normalized.", true, 100f, 1f, Float.POSITIVE_INFINITY);
 
     public EffectVolume() {
         super("volume", "Volume");
@@ -18,8 +18,12 @@ public class EffectVolume extends AudioEffect {
     @Override
     public void processAudio(float[] audioData) {
         for (int i = 0; i < audioData.length; i++) {
-            audioData[i] = audioData[i] * volume.getValue();
+            audioData[i] = audioData[i] * volume.getValue() / 100f;
         }
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " (" + volume.getValue() + "%)";
+    }
 }

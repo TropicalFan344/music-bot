@@ -25,4 +25,8 @@ public abstract class Track {
         throw new RuntimeException("Engine's openRadio() has not been implemented yet");
     }
 
+    public String getEmbedDisplay() {
+        return "[" + getTitle() + "](" + getUrl() + ")";
+    }
+
 }

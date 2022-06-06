@@ -22,6 +22,7 @@ public class ConfigManager {
     @SneakyThrows
     public void reloadConfig() {
         File configFile = new File("config.json");
+        configFile.createNewFile();
 
 
         Gson gson = new GsonBuilder()

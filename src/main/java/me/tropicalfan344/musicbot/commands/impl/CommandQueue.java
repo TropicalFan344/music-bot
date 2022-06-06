@@ -5,6 +5,7 @@ import me.tropicalfan344.musicbot.commands.MusicCommand;
 import me.tropicalfan344.musicbot.engines.ISearchResult;
 import me.tropicalfan344.musicbot.engines.Track;
 import me.tropicalfan344.musicbot.engines.impl.youtube.YouTubeEngine;
+import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -24,7 +25,7 @@ public class CommandQueue extends MusicCommand {
 
     @Override
     public void onExecute(SlashCommandInteractionEvent event) {
-        GuildMusicManager manager = GuildMusicManager.getMusicManager(event.getGuild());
+        GuildMusicManager manager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
         if (manager.getQueue().size() == 0) {
             event.getInteraction().reply("There is nothing in queue.").queue();
         }else {
@@ -34,12 +35,14 @@ public class CommandQueue extends MusicCommand {
             int i = 1;
             for (Track track : manager.getQueue()) {
                 if (i == 1) {
-                    out = out + i + ". " + track.getTitle() + "  <-  **Now Playing**" + "\n";
+                    out = out + i + ". " + track.getEmbedDisplay() + "  <-  **Now Playing**" + "\n";
                 }else {
-                    out = out + i + ". " + track.getTitle() + "\n";
+                    out = out + i + ". " + track.getEmbedDisplay() + "\n";
                 }
                 i++;
             }
+            builder.setDescription(out);
+            builder.setColor(SimpleEmbedGenerator.SUCCESS);
             event.getInteraction().reply(new MessageBuilder(builder).build()).queue();
         }
     }
