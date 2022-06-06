@@ -51,31 +51,32 @@ public class CommandsManager {
                         } catch (Throwable throwable) {
                             if (throwable instanceof CommandException) {
                                 try {
+
+                                    event.getHook().editOriginal(new MessageBuilder(
+                                            SimpleEmbedGenerator.generateErrorEmbed(throwable.getMessage())
+                                    ).build()).queue();
+
                                     event.getInteraction().reply(new MessageBuilder(
                                             SimpleEmbedGenerator.generateErrorEmbed(throwable.getMessage())
                                     ).build()).queue();
-                                } catch (IllegalStateException e) {
-                                    e.printStackTrace();
-                                    if (e.getMessage().equals("This interaction has already been acknowledged or replied to. You can only reply or acknowledge an interaction once!")) {
-                                        event.getHook().editOriginal(new MessageBuilder(
-                                                SimpleEmbedGenerator.generateErrorEmbed(throwable.getMessage())
-                                        ).build()).queue();
-                                    }
+                                } catch (Throwable e) {
+
                                 }
                             } else {
+                                throwable.printStackTrace();
                                 try {
+
+                                    event.getHook().editOriginal(new MessageBuilder(
+                                            // TODO: Error report system
+                                            SimpleEmbedGenerator.generateErrorEmbed("Something went wrong while handling the command! Error: " + throwable.getMessage())
+                                    ).build()).queue();
+
                                     event.getInteraction().reply(new MessageBuilder(
                                             // TODO: Error report system
                                             SimpleEmbedGenerator.generateErrorEmbed("Something went wrong while handling the command! Error: " + throwable.getMessage())
                                     ).build()).queue();
-                                } catch (IllegalStateException e) {
-                                    e.printStackTrace();
-                                    if (e.getMessage().equals("This interaction has already been acknowledged or replied to. You can only reply or acknowledge an interaction once!")) {
-                                        event.getHook().editOriginal(new MessageBuilder(
-                                                // TODO: Error report system
-                                                SimpleEmbedGenerator.generateErrorEmbed("Something went wrong while handling the command! Error: " + throwable.getMessage())
-                                        ).build()).queue();
-                                    }
+                                } catch (Throwable e) {
+
                                 }
                             }
                         }

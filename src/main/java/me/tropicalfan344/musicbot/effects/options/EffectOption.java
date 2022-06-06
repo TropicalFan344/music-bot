@@ -2,6 +2,7 @@ package me.tropicalfan344.musicbot.effects.options;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.tropicalfan344.musicbot.engines.Track;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.OptionType;

@@ -38,12 +38,14 @@ public class YouTubeEngine implements Engine {
 
     @Override
     public boolean canProvide(String url) {
-        return url.matches("https?:\\/\\/(?:\\w*\\.)?youtube.com\\/watch\\?v=([\\w\\n\\-]{11})(&[\\w%]*=[\\w%]*)*");
+        return url.matches("https?:\\/\\/(?:\\w*\\.)?youtube.com\\/watch\\?v=([\\w\\n\\-]{11}).*");
+//        return url.matches("https?:\\/\\/(?:\\w*\\.)?youtube.com\\/watch\\?v=([\\w\\n\\-]{11})(&[\\w%]*=[\\w%]*)*");
     }
 
     @Override
     public Track provide(String url) {
-        Pattern pattern = Pattern.compile("https?:\\/\\/(?:\\w*\\.)?youtube.com\\/watch\\?v=([\\w\\n\\-]{11})(&[\\w%]*=[\\w%]*)*");
+        Pattern pattern = Pattern.compile("https?:\\/\\/(?:\\w*\\.)?youtube.com\\/watch\\?v=([\\w\\n\\-]{11}).*");
+//        Pattern pattern = Pattern.compile("https?:\\/\\/(?:\\w*\\.)?youtube.com\\/watch\\?v=([\\w\\n\\-]{11})(&[\\w%]*=[\\w%]*)*");
         Matcher matcher = pattern.matcher(url);
         if (!matcher.find()) {
             throw new IllegalStateException("Track could not be provided by this engine with URL: " + url);

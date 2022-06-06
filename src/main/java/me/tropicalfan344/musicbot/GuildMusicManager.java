@@ -85,13 +85,12 @@ public class GuildMusicManager {
     }
 
     public void insert(@Range(from = 0, to = Long.MAX_VALUE) int index, Track track) {
-        queue.add(Math.min(index, queue.size() - 1), track);
+        queue.add(Math.min(index, Math.max(0, queue.size() - 1)), track);
         refreshQueue();
     }
 
     public void playMusic(Track track) {
-        queue.add(0, track);
-        refreshQueue();
+        insert(0, track);
     }
 
     public void skip() {
@@ -138,7 +137,16 @@ public class GuildMusicManager {
         if (musicBot.getEngine().canProvide(urlOrQuery)) {
             return musicBot.getEngine().provide(urlOrQuery);
         }
-        return musicBot.getEngine().search(urlOrQuery).getResults().get(0); // TODO: Selectable Support
+        List<Track> results = musicBot.getEngine().search(urlOrQuery).getResults();
+        if (results.isEmpty()) {
+            throw new IndexOutOfBoundsException("Could not find any result");
+        }
+        return results.get(0); // TODO: Selectable Support
+    }
+
+    public void add(Track track) {
+        queue.add(track);
+        refreshQueue();
     }
 
     public List<Track> getQueue() {

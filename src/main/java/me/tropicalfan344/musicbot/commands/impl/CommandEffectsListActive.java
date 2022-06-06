@@ -23,7 +23,7 @@ public class CommandEffectsListActive extends MusicCommand {
             out = "There's no activated effects";
         }
         for (AudioEffect effect : musicManager.getAudioEffectsManager().getEffects()) {
-            out += " - " + effect.toString();
+            out += " - " + effect.toString() + "\n";
         }
         event.getInteraction().replyEmbeds(new EmbedBuilder()
                 .setTitle("Activated Effects")

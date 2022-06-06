@@ -20,7 +20,7 @@ public class CommandEffectsList extends MusicCommand {
         String out = "";
         for (Class<? extends AudioEffect> aClass : AudioEffectsManager.registry) {
             AudioEffect effect = aClass.newInstance();
-            out += " - " + effect.getDisplayName() + " (Active via /" + effect.getId() + ")";
+            out += " - " + effect.getDisplayName() + " (Active via /" + effect.getId() + ")\n";
         }
         event.getInteraction().replyEmbeds(new EmbedBuilder()
                 .setTitle("Available Effects")
