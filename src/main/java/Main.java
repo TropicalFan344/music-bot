@@ -10,6 +10,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.security.auth.login.LoginException;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 public class Main {
     @SneakyThrows

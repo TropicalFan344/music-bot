@@ -18,7 +18,7 @@ public class EffectVolume extends AudioEffect {
     @Override
     public void processAudio(float[] audioData) {
         for (int i = 0; i < audioData.length; i++) {
-            audioData[i] = audioData[i] * volume.getValue() / 100f;
+            audioData[i] = audioData[i] * (volume.getValue() / 100f);
         }
     }
 
