@@ -91,7 +91,7 @@ public class YouTubeTrack extends Track {
             }
         }
 
-        Process process = new ProcessBuilder("ffmpeg", "-i", currentUrl, "-y", "-ar", "48000", "-ac", "2", "-f", "s16be", "-acodec", "pcm_s16be", "pipe:1").start();
+        Process process = new ProcessBuilder("ffmpeg", "-fflags", "+discardcorrupt", "-i", currentUrl, "-y", "-ar", "48000", "-ac", "2", "-f", "s16be", "-acodec", "pcm_s16be", "pipe:1").start();
         new Thread(() -> {
             try {
                 InputStream errorStream = process.getErrorStream();
