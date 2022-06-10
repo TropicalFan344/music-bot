@@ -34,7 +34,7 @@ public class CommandsManager {
             commands.add(new CommandEffectsAdd(aClass.newInstance()));
         }
 
-        CommandListUpdateAction action = musicBot.getJda().getGuildById(854997016996216862L).updateCommands();
+        CommandListUpdateAction action = musicBot.getJda().getGuildById(979552134850834492L).updateCommands();
         for (MusicCommand command : commands) {
             action.addCommands(command.getCommandData());
         }

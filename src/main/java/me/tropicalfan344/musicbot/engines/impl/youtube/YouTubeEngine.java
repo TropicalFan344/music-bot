@@ -35,22 +35,24 @@ public class YouTubeEngine implements Engine {
     public ISearchResult search(String query) {
         return new YouTubeSearchResult(this, null, query);
     }
+    public static final Pattern pattern = Pattern.compile("(?:https?:\\/\\/)?(?:\\w*\\.)?(?:(?:(?:youtube\\.com\\/)watch\\?v=)|(?:youtu\\.be\\/))([a-zA-Z0-9_-]{11})(?:(?:(?:&[\\w%]*=[\\w%]*)|(?:#[\\w%]*))*\\/?)*(?:&list=(PL\\w{32}))+(?:(?:(?:&[\\w%]*=[\\w%]*)|(?:#[\\w%]*))*\\/?)*");
 
     @Override
     public boolean canProvide(String url) {
-        return url.matches("https?:\\/\\/(?:\\w*\\.)?youtube.com\\/watch\\?v=([\\w\\n\\-]{11}).*");
+        return url.matches("(?:https?:\\/\\/)?(?:\\w*\\.)?(?:(?:(?:youtube\\.com\\/)watch\\?v=)|(?:youtu\\.be\\/))([a-zA-Z0-9_-]{11})(?:(?:(?:&[\\w%]*=[\\w%]*)|(?:#[\\w%]*))*\\/?)*(?:&list=(PL\\w{32}))+(?:(?:(?:&[\\w%]*=[\\w%]*)|(?:#[\\w%]*))*\\/?)*");
 //        return url.matches("https?:\\/\\/(?:\\w*\\.)?youtube.com\\/watch\\?v=([\\w\\n\\-]{11})(&[\\w%]*=[\\w%]*)*");
     }
 
     @Override
     public Track provide(String url) {
-        Pattern pattern = Pattern.compile("https?:\\/\\/(?:\\w*\\.)?youtube.com\\/watch\\?v=([\\w\\n\\-]{11}).*");
 //        Pattern pattern = Pattern.compile("https?:\\/\\/(?:\\w*\\.)?youtube.com\\/watch\\?v=([\\w\\n\\-]{11})(&[\\w%]*=[\\w%]*)*");
+        // (?:https?:\/\/)?(?:\w*\.)?(?:(?:(?:youtube\.com\/)watch\?v=)|(?:youtu\.be\/))([a-zA-Z0-9_-]{11})(?:\?list=(\w*))(?:(?:(?:&[\w%]*=[\w%]*)|(?:#[\w%]*))*\/?)*
         Matcher matcher = pattern.matcher(url);
         if (!matcher.find()) {
             throw new IllegalStateException("Track could not be provided by this engine with URL: " + url);
         }
         String videoId = matcher.group(1);
+        String playlistId = matcher.group(2);
         return YouTubeTrack.getByVideoId(videoId);
     }
 

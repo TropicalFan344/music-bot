@@ -11,9 +11,7 @@ import me.tropicalfan344.musicbot.utils.JsonRequestBody;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 
@@ -92,6 +90,7 @@ public class YouTubeTrack extends Track {
                 }
             }
         }
+
         Process process = new ProcessBuilder("ffmpeg", "-i", currentUrl, "-y", "-ar", "48000", "-ac", "2", "-f", "s16be", "-acodec", "pcm_s16be", "pipe:1").start();
         new Thread(() -> {
             try {

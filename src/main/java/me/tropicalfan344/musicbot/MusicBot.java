@@ -29,7 +29,7 @@ public class MusicBot {
         this.reflections = new Reflections(getClass().getPackage().getName());
         this.configManager = new ConfigManager();
         this.jda = JDABuilder
-                .createDefault(configManager.getConfig().token)
+                .createDefault("OTgxOTY5ODI2MDMxNDk3Mjk2.G_KLsN.nfIkYjFUMMfP12GXrMEmJX6m3wm4DKF9zmBcns")
                 .build();
 
         System.out.println("Preparing Bot...");
