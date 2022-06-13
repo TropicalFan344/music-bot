@@ -1,6 +1,7 @@
 package me.tropicalfan344.musicbot.commands.impl;
 
 import me.tropicalfan344.musicbot.GuildMusicManager;
+import me.tropicalfan344.musicbot.commands.CommandException;
 import me.tropicalfan344.musicbot.commands.MusicCommand;
 import me.tropicalfan344.musicbot.engines.Track;
 import me.tropicalfan344.musicbot.engines.impl.youtube.YouTubePlayList;
@@ -26,33 +27,45 @@ public class CommandPlayPlayList extends MusicCommand {
 
     @Override
     public void onExecute(SlashCommandInteractionEvent event) {
-        YouTubePlayList playList;
-        event.getInteraction().deferReply().queue();
-        GuildMusicManager musicManager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
-        if (event.getOption("query").getAsString().startsWith("PL")) {
-            playList = new YouTubePlayList(event.getOption("query").getAsString());
-        }else {
-            Matcher matcher = pattern.matcher(event.getOption("query").getAsString());
-            matcher.find();
-            playList = new YouTubePlayList(matcher.group(1));
-        }
-        List<Track> track = new ArrayList<>();
-        for (Track playlistTrack : playList.getTracks()) {
-            track.add(playlistTrack);
-        }
-        if (playList.getNextPage() != null) {
-            for (Track playlistTrack : playList.getTracks()) {
-                track.add(playlistTrack);
+        if (!event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).getVoiceState().inAudioChannel()) {
+                                                            throw new CommandException("I'm not in a voice channel, use /join to let me join your voice channel.");
+        } else {
+            YouTubePlayList playList;
+            event.getInteraction().deferReply().queue();
+            GuildMusicManager musicManager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
+            if (event.getOption("query").getAsString().startsWith("PL")) {
+                playList = new YouTubePlayList(event.getOption("query").getAsString());
+            }else {
+                Matcher matcher = pattern.matcher(event.getOption("query").getAsString());
+                matcher.find();
+                playList = new YouTubePlayList(matcher.group(1));
             }
+            int size = 0;
+            Track sex = null;
+            for (Track playlistTrack : playList.getTracks()) {
+                if (sex == null) {
+                    sex = playlistTrack;
+                }
+                musicManager.addWithoutRefresh(playlistTrack);
+                size++;
+            }
+            if (playList.getNextPage() != null) {
+                for (Track playlistTrack : playList.getTracks()) {
+                    if (sex == null) {
+                        sex = playlistTrack;
+                    }
+                    musicManager.addWithoutRefresh(playlistTrack);
+                    size++;
+                }
+            }
+
+            musicManager.refreshQueue(false);
+            event.getHook().editOriginalEmbeds(new EmbedBuilder()
+                    .setTitle("Song(s) have been Added")
+                    .setDescription("Added playlist " + playList.getTitle() + " (" + size + ") to the queue")
+                    .setImage(sex.getThumbnail())
+                    .setColor(SimpleEmbedGenerator.SUCCESS)
+                    .build()).queue();
         }
-        for (Track track1 : track) {
-            musicManager.add(track1);
-        }
-        event.getHook().editOriginalEmbeds(new EmbedBuilder()
-                .setTitle("Now Playing")
-                .setDescription("[" + musicManager.getQueue().get(0).getTitle() + "](" + musicManager.getQueue().get(0).getUrl() + ")")
-                .setImage(musicManager.getQueue().get(0).getThumbnail())
-                .setColor(SimpleEmbedGenerator.SUCCESS)
-                .build()).queue();
     }
 }

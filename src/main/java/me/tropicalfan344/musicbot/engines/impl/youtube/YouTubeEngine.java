@@ -35,11 +35,11 @@ public class YouTubeEngine implements Engine {
     public ISearchResult search(String query) {
         return new YouTubeSearchResult(this, null, query);
     }
-    public static final Pattern pattern = Pattern.compile("(?:https?:\\/\\/)?(?:\\w*\\.)?(?:(?:(?:youtube\\.com\\/)watch\\?v=)|(?:youtu\\.be\\/))([a-zA-Z0-9_-]{11})(?:(?:(?:&[\\w%]*=[\\w%]*)|(?:#[\\w%]*))*\\/?)*(?:&list=(PL\\w{32}))+(?:(?:(?:&[\\w%]*=[\\w%]*)|(?:#[\\w%]*))*\\/?)*");
+    public static final Pattern pattern = Pattern.compile("(?:https?:\\/\\/)?(?:\\w*\\.)?(?:(?:(?:youtube\\.com\\/)watch\\?v=)|(?:youtu\\.be\\/))([a-zA-Z0-9_-]{11})(?:(?:(?:&[\\w%]*=[\\w%]*)|(?:#[\\w%]*))*\\/?)*(?:&list=(PL\\w{32}))?(?:(?:(?:&[\\w%]*=[\\w%]*)|(?:#[\\w%]*))*\\/?)*");
 
     @Override
     public boolean canProvide(String url) {
-        return url.matches("(?:https?:\\/\\/)?(?:\\w*\\.)?(?:(?:(?:youtube\\.com\\/)watch\\?v=)|(?:youtu\\.be\\/))([a-zA-Z0-9_-]{11})(?:(?:(?:&[\\w%]*=[\\w%]*)|(?:#[\\w%]*))*\\/?)*(?:&list=(PL\\w{32}))+(?:(?:(?:&[\\w%]*=[\\w%]*)|(?:#[\\w%]*))*\\/?)*");
+        return url.matches(pattern.pattern());
 //        return url.matches("https?:\\/\\/(?:\\w*\\.)?youtube.com\\/watch\\?v=([\\w\\n\\-]{11})(&[\\w%]*=[\\w%]*)*");
     }
 

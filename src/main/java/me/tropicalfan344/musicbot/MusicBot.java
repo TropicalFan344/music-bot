@@ -11,10 +11,12 @@ import me.tropicalfan344.musicbot.engines.Engine;
 import me.tropicalfan344.musicbot.engines.impl.youtube.YouTubeEngine;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
 import org.reflections.Reflections;
 
 public class MusicBot {
 
+    public static MusicBot instance;
 
     @Getter private final Engine engine = new YouTubeEngine();
 
@@ -26,10 +28,12 @@ public class MusicBot {
 
     @SneakyThrows
     public MusicBot() {
+        instance = this;
         this.reflections = new Reflections(getClass().getPackage().getName());
         this.configManager = new ConfigManager();
         this.jda = JDABuilder
                 .createDefault("OTgxOTY5ODI2MDMxNDk3Mjk2.G_KLsN.nfIkYjFUMMfP12GXrMEmJX6m3wm4DKF9zmBcns")
+                .setActivity(Activity.playing("Gayshin Impact"))
                 .build();
 
         System.out.println("Preparing Bot...");

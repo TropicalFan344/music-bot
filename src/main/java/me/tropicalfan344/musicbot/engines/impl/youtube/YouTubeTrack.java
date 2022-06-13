@@ -12,8 +12,11 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class YouTubeTrack extends Track {
 
@@ -91,7 +94,24 @@ public class YouTubeTrack extends Track {
             }
         }
 
-        Process process = new ProcessBuilder("ffmpeg", "-fflags", "+discardcorrupt", "-i", currentUrl, "-y", "-ar", "48000", "-ac", "2", "-f", "s16be", "-acodec", "pcm_s16be", "pipe:1").start();
+        File tmpDir = new File(System.getProperty("java.io.tmpdir"));
+        File outputFile = new File(tmpDir, UUID.randomUUID().toString() + ".musicbot.pcm");
+
+        tmpDir.mkdirs();
+        outputFile.createNewFile();
+//        URL url = new URL(currentUrl);
+//        URLConnection urlConnection = url.openConnection();
+//        InputStream inputStream = urlConnection.getInputStream();
+//        FileOutputStream outputStream = new FileOutputStream(outputFile);
+//        byte[] readBuffer = new byte[1024];
+//        while (true) {
+//            int read = inputStream.read(readBuffer);
+//            if (read == -1) break;
+//            outputStream.write(readBuffer, 0, read);
+//        }
+//        outputStream.close();
+//        inputStream.close();
+        Process process = new ProcessBuilder("ffmpeg", "-i", currentUrl, "-y", "-ar", "48000", "-ac", "2", "-f", "s16be", "-acodec", "pcm_s16be", outputFile.getAbsolutePath()).start();
         new Thread(() -> {
             try {
                 InputStream errorStream = process.getErrorStream();
@@ -104,15 +124,48 @@ public class YouTubeTrack extends Track {
                 e.printStackTrace();
             }
         }).start();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        InputStream inputStream = process.getInputStream();
-//        while (true) {
-//            int read = inputStream.read();
-//            if (read == -1) break;
-//            outputStream.write(read);
-//        }
-//        inputStream.close();
-        return inputStream;
+
+
+        return new InputStream() {
+            InputStream targetStream = null;
+            int currentIndex = 0;
+            @Override
+            public int read() throws IOException {
+                currentIndex++;
+
+                if (targetStream != null) {
+                    int read = targetStream.read();
+                    if (read != -1) {
+                        return read;
+                    }
+                }
+                int read = -1;
+                while (read == -1 && process.isAlive()) {
+                    if (targetStream != null) {
+                        targetStream.close();
+                    }
+                    targetStream = new FileInputStream(outputFile);
+                    for (int i = 0; i < currentIndex; i++) {
+                        read = targetStream.read();
+                        if (read == -1) {
+                            break;
+                        }
+                    }
+                }
+
+                return read;
+            }
+
+            @Override
+            public void close() throws IOException {
+                try {
+                    targetStream.close();
+                } catch (Exception ignored) {}
+                try {
+                    process.destroy();
+                } catch (Exception ignored) {}
+            }
+        };
     }
 
     @Override

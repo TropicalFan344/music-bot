@@ -26,14 +26,14 @@ public class CommandPlay extends MusicCommand {
     public void onExecute(SlashCommandInteractionEvent event) {
         if (!event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).getVoiceState().inAudioChannel()) {
             throw new CommandException("I'm not in a voice channel, use /join to let me join your voice channel.");
-        }else {
+        } else {
             event.getInteraction().deferReply().queue();
             GuildMusicManager musicManager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
             Track targetTrack = musicManager.findSong(event.getOption("query").getAsString());
             musicManager.playMusic(targetTrack);
             event.getHook().editOriginalEmbeds(new EmbedBuilder()
                     .setTitle("Now Playing")
-                    .setDescription("[" + targetTrack.getTitle() + "](" + targetTrack.getUrl() + ")")
+                    .setDescription(targetTrack.getEmbedDisplay())
                     .setImage(targetTrack.getThumbnail())
                     .setColor(SimpleEmbedGenerator.SUCCESS)
                     .build()).queue();

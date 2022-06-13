@@ -26,6 +26,10 @@ public class TrackSendHandler implements AudioSendHandler, Closeable {
 
     @Getter
     private final InputStream inputStream;
+
+    @Getter
+    private long time = 0;
+
     private final GuildMusicManager musicManager;
 
     private final Runnable onFinish;
@@ -51,6 +55,7 @@ public class TrackSendHandler implements AudioSendHandler, Closeable {
     private final ByteBuffer buffer = ByteBuffer.allocate((int) (INPUT_FORMAT.getFrameRate() * 0.02) * INPUT_FORMAT.getFrameSize());
     private final byte[] readBuffer = new byte[buffer.capacity()];
     private final float[] effectBuffer = new float[buffer.capacity() / 2];
+
 
 
     @Nullable
@@ -85,6 +90,7 @@ public class TrackSendHandler implements AudioSendHandler, Closeable {
             }
             buffer.put(readBuffer);
             buffer.flip();
+            time += 20;
             return buffer;
         }else {
             return null;
@@ -101,5 +107,11 @@ public class TrackSendHandler implements AudioSendHandler, Closeable {
         inputStream.close();
         closed = true;
         onFinish.run();
+    }
+
+    @SneakyThrows
+    public void closeWithoutRefreshingThisStupidGodDamnFuckingPieceOfShit() {
+        inputStream.close();
+        closed = true;
     }
 }

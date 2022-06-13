@@ -26,7 +26,7 @@ public abstract class Track {
     }
 
     public String getEmbedDisplay() {
-        return "[" + getTitle() + "](" + getUrl() + ")";
+        return "[" + getArtist() + " - " + getTitle() + "](" + getUrl() + ")";
     }
 
 }

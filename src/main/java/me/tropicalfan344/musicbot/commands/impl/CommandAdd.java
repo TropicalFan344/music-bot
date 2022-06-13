@@ -24,7 +24,7 @@ public class CommandAdd extends MusicCommand {
         musicManager.add(targetTrack);
         event.getHook().editOriginalEmbeds(new EmbedBuilder()
                 .setTitle("Added")
-                .setDescription("[" + targetTrack.getTitle() + "](" + targetTrack.getUrl() + ")")
+                .setDescription(targetTrack.getEmbedDisplay())
                 .setImage(targetTrack.getThumbnail())
                 .setColor(SimpleEmbedGenerator.SUCCESS)
                 .build()).queue();

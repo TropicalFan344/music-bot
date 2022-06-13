@@ -1,11 +1,12 @@
 package me.tropicalfan344.musicbot;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import me.tropicalfan344.musicbot.effects.AudioEffectsManager;
 import me.tropicalfan344.musicbot.engines.Track;
 import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.Range;
 
@@ -39,6 +40,9 @@ public class GuildMusicManager {
 
     private TrackSendHandler sendHandler;
 
+
+    @Getter @Setter private LoopMode loopMode = LoopMode.SINGLE;
+
     public GuildMusicManager(MusicBot musicBot, Guild guild) {
         this.musicBot = musicBot;
         this.guild = guild;
@@ -53,22 +57,39 @@ public class GuildMusicManager {
      * @param skip If it's skipping, and it's in "repeat one" mode, it will still skip it
      */
     private void nextSong(boolean skip) {
-        queue.remove(0); // TODO: Repeat One, Repeat All, and Single (Implemented)
+        if (loopMode == LoopMode.OFF) {
+            queue.remove(0); // Remove the first one
+        }
+        if (loopMode == LoopMode.SINGLE) {
+            if (skip) {
+                queue.add(queue.remove(0)); // Remove the first one, and add it to the bottom of the queue
+            } else {
+                // Do nothing so it will play the same fucking song
+            }
+        }
+        if (loopMode == LoopMode.LOOP) {
+            queue.add(queue.remove(0)); // Remove the first one, and add it to the bottom of the queue
+        }
     }
 
-    public void refreshQueue() {
+    public void refreshQueue(boolean force) {
+        if (force) {
+            sendHandler.closeWithoutRefreshingThisStupidGodDamnFuckingPieceOfShit();
+            sendHandler = null;
+        }
         if (sendHandler == null) {
             if (!queue.isEmpty()) {
                 sendHandler = new TrackSendHandler(queue.get(0), this, () -> {
                     nextSong(false);
-                    refreshQueue();
+                    refreshQueue(true);
                 });
                 getGuildAudioManager().setSendingHandler(sendHandler);
             }
         } else {
             if (queue.isEmpty() || sendHandler.getTrack() != queue.get(0)) {
+                sendHandler.closeWithoutRefreshingThisStupidGodDamnFuckingPieceOfShit();
                 sendHandler = null;
-                refreshQueue();
+                refreshQueue(false);
                 getGuildAudioManager().setSendingHandler(sendHandler);
             }
         }
@@ -76,17 +97,17 @@ public class GuildMusicManager {
 
     public void remove(@Range(from = 0, to = Long.MAX_VALUE) int index) {
         queue.remove(Math.min(index, queue.size() - 1));
-        refreshQueue();
+        refreshQueue(false);
     }
 
     public void clearQueue() {
         queue.clear();
-        refreshQueue();
+        refreshQueue(false);
     }
 
     public void insert(@Range(from = 0, to = Long.MAX_VALUE) int index, Track track) {
         queue.add(Math.min(index, Math.max(0, queue.size() - 1)), track);
-        refreshQueue();
+        refreshQueue(false);
     }
 
     public void playMusic(Track track) {
@@ -95,7 +116,7 @@ public class GuildMusicManager {
 
     public void skip() {
         nextSong(true);
-        refreshQueue();
+        refreshQueue(true);
     }
 
     public void stop() {
@@ -144,13 +165,27 @@ public class GuildMusicManager {
         return results.get(0); // TODO: Selectable Support
     }
 
+    public void addWithoutRefresh(Track track) {
+        queue.add(track);
+    }
+
     public void add(Track track) {
         queue.add(track);
-        refreshQueue();
+        refreshQueue(false);
     }
 
     public List<Track> getQueue() {
         return new ArrayList<>(queue);
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public enum LoopMode {
+        SINGLE("Single"),
+        LOOP("Loop"),
+        OFF("Off");
+
+        String name;
     }
 
 }

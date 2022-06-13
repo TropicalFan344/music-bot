@@ -9,22 +9,23 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-public class CommandRemove extends MusicCommand {
-    public CommandRemove() {
-        super("remove", "Remove song from queue", new OptionData(OptionType.INTEGER, "index", "Index of the queue. Use /queue to check.", true));
+public class CommandInsert extends MusicCommand {
+    public CommandInsert() {
+        super("insert", "Insert a song to the queue", new OptionData(OptionType.INTEGER, "index", "The index of the song to be inserted to", true), new OptionData(OptionType.STRING, "query", "URL of the song / The song name", true));
     }
 
     @Override
     public void onExecute(SlashCommandInteractionEvent event) {
         event.getInteraction().deferReply().queue();
-        GuildMusicManager manager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
-        Track targetTrack = manager.getQueue().get(event.getOption("index").getAsInt() - 1);
+        GuildMusicManager musicManager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
+
+        Track targetTrack = musicManager.findSong(event.getOption("query").getAsString());
+        musicManager.insert(event.getOption("index").getAsInt(), targetTrack);
         event.getHook().editOriginalEmbeds(new EmbedBuilder()
-                .setTitle("Removed")
+                .setTitle("Inserted")
                 .setDescription(targetTrack.getEmbedDisplay())
                 .setImage(targetTrack.getThumbnail())
                 .setColor(SimpleEmbedGenerator.SUCCESS)
                 .build()).queue();
-        manager.remove(event.getOption("index").getAsInt() - 1);
     }
 }
