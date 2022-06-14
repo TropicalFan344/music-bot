@@ -32,7 +32,7 @@ public class MusicBot {
         this.reflections = new Reflections(getClass().getPackage().getName());
         this.configManager = new ConfigManager();
         this.jda = JDABuilder
-                .createDefault("OTgxOTY5ODI2MDMxNDk3Mjk2.G_KLsN.nfIkYjFUMMfP12GXrMEmJX6m3wm4DKF9zmBcns")
+                .createDefault(configManager.getConfig().token)
                 .setActivity(Activity.playing("Gayshin Impact"))
                 .build();
 

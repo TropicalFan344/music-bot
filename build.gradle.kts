@@ -44,6 +44,9 @@ publishing {
 
 tasks {
     register<JavaExec>("run") {
+        doFirst() {
+
+        }
         dependsOn("classes")
         mainClass.set("Main")
         workingDir("run/")
