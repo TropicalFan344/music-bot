@@ -78,6 +78,8 @@ public class YouTubeTrack extends Track {
         }
         JsonObject responseBody = YouTubeEngine.gson.fromJson(body, JsonObject.class);
 
+        System.out.println(body);
+
         JsonArray adaptiveFormats = responseBody.getAsJsonObject("streamingData")
                 .getAsJsonArray("adaptiveFormats");
         int currentMax = 0;

@@ -3,3 +3,5 @@ target/
 run/
 out/
 **.iml
+.gradle/
+build/

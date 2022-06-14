@@ -3,6 +3,7 @@ package me.tropicalfan344.musicbot.effects.impl;
 import me.tropicalfan344.musicbot.effects.AudioEffect;
 import me.tropicalfan344.musicbot.effects.options.impl.FloatOption;
 import org.jetbrains.annotations.Range;
+import uk.me.berndporr.iirj.Butterworth;
 
 public class EffectVolume extends AudioEffect {
 
@@ -20,6 +21,7 @@ public class EffectVolume extends AudioEffect {
         for (int i = 0; i < audioData.length; i++) {
             audioData[i] = audioData[i] * (volume.getValue() / 100f);
         }
+
     }
 
     @Override
