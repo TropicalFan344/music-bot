@@ -113,8 +113,15 @@ public class YouTubeTrack extends Track {
 //        }
 //        outputStream.close();
 //        inputStream.close();
-        Process process = new ProcessBuilder("ffmpeg", "-i", currentUrl, "-y", "-ar", "48000", "-ac", "2", "-f", "s16be", "-acodec", "pcm_s16be", outputFile.getAbsolutePath()).start();
+        Process process = new ProcessBuilder("ffmpeg", "-i", currentUrl, "-y", "-ar", "48000", "-ac", "2", "-f", "s16be", "-acodec", "pcm_s16be", "pipe:1").start();
         System.out.println("ffmpeg -i \"" + currentUrl + "\" -y -ar 48000 -ac 2 -f s16be -acodec pcm_s16be " + outputFile.getAbsolutePath());
+        new Thread(new Runnable() {
+            @Override
+            @SneakyThrows
+            public void run() {
+
+            }
+        }).start();
         new Thread(() -> {
             try {
                 InputStream errorStream = process.getErrorStream();

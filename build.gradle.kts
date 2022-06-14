@@ -44,8 +44,8 @@ publishing {
 
 tasks {
     register<JavaExec>("run") {
-        doFirst() {
-
+        doFirst {
+            File("run/").mkdirs()
         }
         dependsOn("classes")
         mainClass.set("Main")

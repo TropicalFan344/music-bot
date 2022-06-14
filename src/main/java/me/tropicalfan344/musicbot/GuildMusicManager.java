@@ -67,7 +67,7 @@ public class GuildMusicManager {
                 // Do nothing so it will play the same fucking song
             }
         }
-        if (loopMode == LoopMode.LOOP) {
+        if (loopMode == LoopMode.ALL) {
             queue.add(queue.remove(0)); // Remove the first one, and add it to the bottom of the queue
         }
     }
@@ -182,7 +182,7 @@ public class GuildMusicManager {
     @Getter
     public enum LoopMode {
         SINGLE("Single"),
-        LOOP("Loop"),
+        ALL("All"),
         OFF("Off");
 
         String name;
