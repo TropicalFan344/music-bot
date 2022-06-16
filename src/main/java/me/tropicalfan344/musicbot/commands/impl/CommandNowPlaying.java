@@ -36,7 +36,7 @@ public class CommandNowPlaying extends MusicCommand {
         int after = 20 - before;
         description += repeat("─", before) + "◉" + repeat("─", after);
 
-        description += "\n◄◄⠀" + (musicManager.getSendHandler().isPaused()?":pause_button:":":arrow_forward:") + "\"⠀►►   " + time;
+        description += "\n◄◄⠀" + (musicManager.getSendHandler().isPaused()?":pause_button:":":arrow_forward:") + "⠀►►   " + time;
 
         Track targetTrack = musicManager.getQueue().get(0);
         event.getInteraction().replyEmbeds(new EmbedBuilder()
