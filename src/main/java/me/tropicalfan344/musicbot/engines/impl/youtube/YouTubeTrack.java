@@ -216,6 +216,7 @@ public class YouTubeTrack extends Track {
                     }
                     inputStream.close();
                 }
+                pcmInputStream.downloadedLastSecond = 0;
                 outputStream.close();
             }
         }.start();
