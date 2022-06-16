@@ -39,7 +39,7 @@ public class CommandNowPlaying extends MusicCommand {
         description += "\n◄◄⠀" + (musicManager.getSendHandler().isPaused()?":pause_button:":":arrow_forward:") + "\"⠀►►   " + time;
 
         Track targetTrack = musicManager.getQueue().get(0);
-        event.getHook().replyEmbeds(new EmbedBuilder()
+        event.getInteraction().replyEmbeds(new EmbedBuilder()
                 .setTitle(targetTrack.getTitle(), targetTrack.getUrl())
                 .setAuthor("ɴᴏᴡ ᴘʟᴀʏɪɴɢ:")
                 .setDescription(description)
