@@ -32,7 +32,7 @@ public class CommandNowPlaying extends MusicCommand {
         String time = String.format("%02d:%02d / %02d:%02d", currentMinute, currentSecond, totalMinute, totalSecond);
         float progress = currentTime*1.0f/totalLength;
         String description = "";
-        int before = (int) progress * 20;
+        int before = (int) (progress * 20);
         int after = 20 - before;
         description += repeat("─", before) + "◉" + repeat("─", after);
 
