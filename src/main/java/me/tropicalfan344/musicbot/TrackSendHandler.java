@@ -39,7 +39,6 @@ public class TrackSendHandler implements AudioSendHandler, Closeable {
      * Create an instance of stream send handler. Stream send handler reads the input stream, and send it back to JDA.
      * After sending back to JDA, JDA will encode the audio to Opus, and send it back to Discord.
      * The required audio data can be accessed via {@link AudioSendHandler#INPUT_FORMAT}
-     * @param inputStream Raw input stream of PCM signed 16-bit big endian.
      */
     public TrackSendHandler(Track track, GuildMusicManager musicManager, Runnable onFinish) {
         this.track = track;

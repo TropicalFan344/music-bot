@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.tropicalfan344.musicbot.effects.AudioEffectsManager;
 import me.tropicalfan344.musicbot.engines.Track;
+import net.dv8tion.jda.api.audio.SpeakingMode;
 import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.managers.AudioManager;
@@ -144,6 +145,7 @@ public class GuildMusicManager {
     }
 
     public void joinVoiceChannel(AudioChannel channel) {
+        getGuildAudioManager().setSelfMuted(true);
         getGuildAudioManager().openAudioConnection(channel);
     }
 
