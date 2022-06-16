@@ -53,6 +53,13 @@ public class GuildMusicManager {
         return getGuild().getAudioManager();
     }
 
+    public TrackSendHandler getSendHandler() {
+        if (!(getGuildAudioManager().getSendingHandler() instanceof TrackSendHandler)) {
+            return null;
+        }
+        return ((TrackSendHandler) getGuildAudioManager().getSendingHandler());
+    }
+
     /**
      * @param skip If it's skipping, and it's in "repeat one" mode, it will still skip it
      */
