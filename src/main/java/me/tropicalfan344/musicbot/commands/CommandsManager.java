@@ -40,7 +40,7 @@ public class CommandsManager {
                 command.musicBot = musicBot;
                 commands.add(command);
             } catch (Exception e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             }
         }
 

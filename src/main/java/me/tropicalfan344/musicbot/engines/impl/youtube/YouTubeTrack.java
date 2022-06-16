@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.tropicalfan344.musicbot.engines.EngineException;
+import me.tropicalfan344.musicbot.engines.PCMInputStream;
 import me.tropicalfan344.musicbot.engines.Track;
 import me.tropicalfan344.musicbot.utils.JsonRequestBody;
 import okhttp3.Request;
@@ -13,10 +14,10 @@ import okhttp3.Response;
 
 import java.io.*;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class YouTubeTrack extends Track {
 
@@ -62,7 +63,7 @@ public class YouTubeTrack extends Track {
 
     @Override
     @SneakyThrows
-    public InputStream getPCMStream() {
+    public PCMInputStream getPCMStream() {
         JsonObject requestBody = new JsonObject();
         requestBody.add("context", YouTubeEngine.getContextIOS("en", "US"));
         requestBody.addProperty("videoId", videoId);
@@ -80,7 +81,7 @@ public class YouTubeTrack extends Track {
         }
         JsonObject responseBody = YouTubeEngine.gson.fromJson(body, JsonObject.class);
 
-        System.out.println(body);
+//        System.out.println(body);
 
         JsonArray adaptiveFormats = responseBody.getAsJsonObject("streamingData")
                 .getAsJsonArray("adaptiveFormats");
@@ -103,20 +104,9 @@ public class YouTubeTrack extends Track {
 
         tmpDir.mkdirs();
         outputFile.createNewFile();
-//        URL url = new URL(currentUrl);
-//        URLConnection urlConnection = url.openConnection();
-//        InputStream inputStream = urlConnection.getInputStream();
-//        FileOutputStream outputStream = new FileOutputStream(outputFile);
-//        byte[] readBuffer = new byte[1024];
-//        while (true) {
-//            int read = inputStream.read(readBuffer);
-//            if (read == -1) break;
-//            outputStream.write(readBuffer, 0, read);
-//        }
-//        outputStream.close();
-//        inputStream.close();
-        Process process = new ProcessBuilder("ffmpeg", "-i", currentUrl, "-y", "-ar", "48000", "-ac", "2", "-f", "s16be", "-acodec", "pcm_s16be", outputFile.getAbsolutePath()).start();
-        System.out.println("ffmpeg -i \"" + currentUrl + "\" -y -ar 48000 -ac 2 -f s16be -acodec pcm_s16be pipe:1");
+
+        Process process = new ProcessBuilder("ffmpeg", "-i", "pipe:", "-y", "-ar", "48000", "-ac", "2", "-f", "s16be", "-acodec", "pcm_s16be", outputFile.getAbsolutePath()).start();
+        System.out.println("ffmpeg -i pipe: -y -ar 48000 -ac 2 -f s16be -acodec pcm_s16be pipe:1");
 
         new Thread(() -> {
             try {
@@ -124,17 +114,52 @@ public class YouTubeTrack extends Track {
                 while (true) {
                     int read = errorStream.read();
                     if (read == -1) break;
-                    System.out.write(read);
+                    System.err.write(read);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }).start();
 
+        URL url = new URL(currentUrl);
+        Pattern pattern = Pattern.compile("clen=(\\d*)&");
+        Matcher matcher = pattern.matcher(url.getQuery());
+        if (!matcher.find()) {
+            throw new EngineException("Could not find total length in url!", "URL: " + url);
+        }
+        int length = Integer.parseInt(matcher.group(1));
+        String finalCurrentUrl = currentUrl;
+        new Thread() {
+            @Override
+            @SneakyThrows
+            public void run() {
+                int readIndex = 0;
+                OutputStream outputStream = process.getOutputStream();
+                while (true) {
+                    int remainingBytes = length - readIndex;
+                    if (remainingBytes <= 0) {
+                        break;
+                    }
+                    int bytesToBeRead = Math.min(30000, remainingBytes);
+                    URL sendUrl = new URL(finalCurrentUrl + "&range=" + readIndex + "-" + (readIndex + bytesToBeRead - 1));
+                    readIndex += bytesToBeRead;
+                    InputStream inputStream = sendUrl.openStream();
+                    while (true) {
+                        int read = inputStream.read();
+                        if (read == -1) break;
+                        outputStream.write(read);
+                    }
+                    inputStream.close();
+                }
+                outputStream.close();
+            }
+        }.start();
 
-        return new InputStream() {
+
+        return new PCMInputStream() {
+
             InputStream targetStream = null;
-            int currentIndex = 0;
+            long currentIndex = 0;
             @Override
             public int read() throws IOException {
                 currentIndex++;
@@ -171,6 +196,12 @@ public class YouTubeTrack extends Track {
                 try {
                     process.destroy();
                 } catch (Exception ignored) {}
+            }
+
+            @Override
+            public long skip(long amount) {
+                currentIndex = currentIndex + amount;
+                return 0;
             }
         };
     }

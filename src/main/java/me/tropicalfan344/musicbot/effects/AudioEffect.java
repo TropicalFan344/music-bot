@@ -37,7 +37,6 @@ public abstract class AudioEffect {
     public List<EffectOption<?>> getAllOptions() {
         List<EffectOption<?>> options = new ArrayList<>();
         for (Field field : getClass().getFields()) {
-            System.out.println(field.getType().getName() + " / " + EffectOption.class.isAssignableFrom(field.getType()) + " / " + field.getName());
             if (EffectOption.class.isAssignableFrom(field.getType())) {
                 options.add((EffectOption<?>) field.get(this));
             }
@@ -48,11 +47,9 @@ public abstract class AudioEffect {
     @SneakyThrows
     public List<OptionData> getAllCommandsOptions() {
         List<OptionData> options = new ArrayList<>();
-        System.out.println("O: SEX");
 
         for (EffectOption<?> option : getAllOptions()) {
             options.add(new OptionData(option.getArgumentOptionType(), option.getName(), option.getDescription(), option.isRequired()));
-            System.out.println("O: " + option.getName());
         }
 
         return options;

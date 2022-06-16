@@ -21,7 +21,6 @@ public class Test {
         process.waitFor();
         AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(musicFile);
         AudioFormat format = audioInputStream.getFormat();
-        System.out.println(format + " should be " + AudioSendHandler.INPUT_FORMAT);
         byte[] readBuffer = new byte[16];
         SourceDataLine device = null;
         for (Mixer.Info info : AudioSystem.getMixerInfo()) {
