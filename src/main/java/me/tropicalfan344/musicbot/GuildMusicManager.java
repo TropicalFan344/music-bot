@@ -41,7 +41,7 @@ public class GuildMusicManager {
     private TrackSendHandler sendHandler;
 
 
-    @Getter @Setter private LoopMode loopMode = LoopMode.SINGLE;
+    @Getter @Setter private LoopMode loopMode = LoopMode.OFF;
 
     public GuildMusicManager(MusicBot musicBot, Guild guild) {
         this.musicBot = musicBot;

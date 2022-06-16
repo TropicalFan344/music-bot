@@ -11,12 +11,14 @@ public abstract class Track {
     @Getter private final String artist;
     @Getter private final String thumbnail;
     @Getter private final String url;
+    @Getter private final int length;
 
-    public Track(String title, String artist, String thumbnail, String url) {
+    public Track(String title, String artist, String thumbnail, String url, int length) {
         this.title = title;
         this.artist = artist;
         this.thumbnail = thumbnail;
         this.url = url;
+        this.length = length;
     }
 
     public abstract InputStream getPCMStream(); // Not yet implemented / not implemented yet

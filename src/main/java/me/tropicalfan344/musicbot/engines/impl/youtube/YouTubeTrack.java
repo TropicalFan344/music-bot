@@ -47,15 +47,17 @@ public class YouTubeTrack extends Track {
         }
         String title = videoDetails.get("title").getAsString();
         String author = videoDetails.get("author").getAsString();
+        int length = videoDetails.get("lengthSeconds").getAsInt();
         JsonArray thumbnails = videoDetails.getAsJsonObject("thumbnail").getAsJsonArray("thumbnails");
         String thumbnail = thumbnails.get(thumbnails.size() - 1).getAsJsonObject().get("url").getAsString();
-        return new YouTubeTrack(title, author, thumbnail, id);
+        return new YouTubeTrack(title, author, thumbnail, id, length);
 
     }
 
-    public YouTubeTrack(String title, String artist, String thumbnail, String videoId) {
-        super(title, artist, thumbnail, "https://www.youtube.com/watch?v=" + videoId);
+    public YouTubeTrack(String title, String artist, String thumbnail, String videoId, int length) {
+        super(title, artist, thumbnail, "https://www.youtube.com/watch?v=" + videoId, length);
         this.videoId = videoId;
+
     }
 
     @Override
@@ -113,15 +115,9 @@ public class YouTubeTrack extends Track {
 //        }
 //        outputStream.close();
 //        inputStream.close();
-        Process process = new ProcessBuilder("ffmpeg", "-i", currentUrl, "-y", "-ar", "48000", "-ac", "2", "-f", "s16be", "-acodec", "pcm_s16be", "pipe:1").start();
-        System.out.println("ffmpeg -i \"" + currentUrl + "\" -y -ar 48000 -ac 2 -f s16be -acodec pcm_s16be " + outputFile.getAbsolutePath());
-        new Thread(new Runnable() {
-            @Override
-            @SneakyThrows
-            public void run() {
+        Process process = new ProcessBuilder("ffmpeg", "-i", currentUrl, "-y", "-ar", "48000", "-ac", "2", "-f", "s16be", "-acodec", "pcm_s16be", outputFile.getAbsolutePath()).start();
+        System.out.println("ffmpeg -i \"" + currentUrl + "\" -y -ar 48000 -ac 2 -f s16be -acodec pcm_s16be pipe:1");
 
-            }
-        }).start();
         new Thread(() -> {
             try {
                 InputStream errorStream = process.getErrorStream();
@@ -170,6 +166,7 @@ public class YouTubeTrack extends Track {
             public void close() throws IOException {
                 try {
                     targetStream.close();
+                    outputFile.delete();
                 } catch (Exception ignored) {}
                 try {
                     process.destroy();

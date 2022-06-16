@@ -82,12 +82,21 @@ public class YouTubeSearchResult implements ISearchResult {
         for (JsonElement jsonElement : contents.get(0).getAsJsonObject().getAsJsonObject("itemSectionRenderer").getAsJsonArray("contents")) {
             JsonObject video = jsonElement.getAsJsonObject().getAsJsonObject("videoRenderer");
             if (video != null) {
+                JsonObject lengthText = video.getAsJsonObject("lengthText");
+                String[] split = lengthText.get("simpleText").getAsString().split(":");
+                int result = 0;
+                for (int unit = 0; unit < split.length; unit++) {
+                    int sex = split.length - unit - 1;
+                    int number = Integer.parseInt(split[unit]);
+                    result += Math.pow(60, sex) * number;
+                }
                 JsonArray thumbnails = video.getAsJsonObject("thumbnail").getAsJsonArray("thumbnails");
                 tracks.add(new YouTubeTrack(
                         YouTubeEngine.extractRuns(video.getAsJsonObject("title")),
                         YouTubeEngine.extractRuns(video.getAsJsonObject("ownerText")),
                         thumbnails.get(thumbnails.size() - 1).getAsJsonObject().get("url").getAsString(),
-                        video.get("videoId").getAsString()
+                        video.get("videoId").getAsString(),
+                        result
                 ));
             }
         }
