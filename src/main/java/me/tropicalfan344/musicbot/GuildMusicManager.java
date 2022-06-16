@@ -10,10 +10,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.Range;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GuildMusicManager {
 
@@ -181,6 +178,15 @@ public class GuildMusicManager {
         refreshQueue(false);
     }
 
+    public void replay() {
+        refreshQueue(true);
+    }
+    public void shuffle() {
+        Track first = queue.remove(0);
+        Collections.shuffle(queue);
+        queue.add(0, first);
+    }
+
     public List<Track> getQueue() {
         return new ArrayList<>(queue);
     }
@@ -188,11 +194,12 @@ public class GuildMusicManager {
     @AllArgsConstructor
     @Getter
     public enum LoopMode {
-        SINGLE("Single"),
-        ALL("All"),
-        OFF("Off");
+        SINGLE("Single", "\uD83D\uDD02"),
+        ALL("All", "\uD83D\uDD01"),
+        OFF("Off", "❌️");
 
         String name;
+        String emoji;
     }
 
 }

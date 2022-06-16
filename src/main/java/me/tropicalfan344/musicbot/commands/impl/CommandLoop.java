@@ -26,6 +26,6 @@ public class CommandLoop extends MusicCommand {
 
         GuildMusicManager.getMusicManager(musicBot, event.getGuild()).setLoopMode(targetLoopMode);
 
-        event.getInteraction().replyEmbeds(SimpleEmbedGenerator.generateSuccessfulEmbed("Loop mode has been changed to " + targetLoopMode.getName() + "!")).queue();
+        event.getInteraction().replyEmbeds(SimpleEmbedGenerator.generateSuccessfulEmbed(targetLoopMode.getEmoji() + " Loop mode has been changed to " + targetLoopMode.getName() + "!")).queue();
     }
 }
