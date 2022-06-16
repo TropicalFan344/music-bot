@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import me.tropicalfan344.musicbot.effects.AudioEffect;
+import me.tropicalfan344.musicbot.engines.PCMInputStream;
 import me.tropicalfan344.musicbot.engines.Track;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +26,7 @@ public class TrackSendHandler implements AudioSendHandler, Closeable {
     private final Track track;
 
     @Getter
-    private final InputStream inputStream;
+    private final PCMInputStream inputStream;
 
     @Getter
     private long time = 0;

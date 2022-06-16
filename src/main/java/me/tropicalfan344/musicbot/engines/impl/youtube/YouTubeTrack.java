@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 
 public class YouTubeTrack extends Track {
 
+
     @Getter
     private final String videoId;
 
@@ -129,37 +130,15 @@ public class YouTubeTrack extends Track {
         }
         int length = Integer.parseInt(matcher.group(1));
         String finalCurrentUrl = currentUrl;
-        new Thread() {
-            @Override
-            @SneakyThrows
-            public void run() {
-                int readIndex = 0;
-                OutputStream outputStream = process.getOutputStream();
-                while (true) {
-                    int remainingBytes = length - readIndex;
-                    if (remainingBytes <= 0) {
-                        break;
-                    }
-                    int bytesToBeRead = Math.min(30000, remainingBytes);
-                    URL sendUrl = new URL(finalCurrentUrl + "&range=" + readIndex + "-" + (readIndex + bytesToBeRead - 1));
-                    readIndex += bytesToBeRead;
-                    InputStream inputStream = sendUrl.openStream();
-                    while (true) {
-                        int read = inputStream.read();
-                        if (read == -1) break;
-                        outputStream.write(read);
-                    }
-                    inputStream.close();
-                }
-                outputStream.close();
-            }
-        }.start();
+        byte[] buffer = new byte[1024*8];
 
 
-        return new PCMInputStream() {
+
+        PCMInputStream pcmInputStream = new PCMInputStream() {
 
             InputStream targetStream = null;
             long currentIndex = 0;
+
             @Override
             public int read() throws IOException {
                 currentIndex++;
@@ -188,14 +167,16 @@ public class YouTubeTrack extends Track {
             }
 
             @Override
-            public void close() throws IOException {
+            public void close() {
                 try {
                     targetStream.close();
                     outputFile.delete();
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
                 try {
                     process.destroy();
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             }
 
             @Override
@@ -204,6 +185,41 @@ public class YouTubeTrack extends Track {
                 return 0;
             }
         };
+
+        new Thread() {
+            long dataPushTime = 0;
+            long downloaded = 0;
+            @Override
+            @SneakyThrows
+            public void run() {
+                int readIndex = 0;
+                OutputStream outputStream = process.getOutputStream();
+                while (true) {
+                    int remainingBytes = length - readIndex;
+                    if (remainingBytes <= 0) {
+                        break;
+                    }
+                    int bytesToBeRead = Math.min(32767, remainingBytes);
+                    URL sendUrl = new URL(finalCurrentUrl + "&range=" + readIndex + "-" + (readIndex + bytesToBeRead - 1));
+                    readIndex += bytesToBeRead;
+                    InputStream inputStream = sendUrl.openStream();
+                    while (true) {
+                        int read = inputStream.read(buffer);
+                        if (read == -1) break;
+                        outputStream.write(buffer, 0, read);
+                        if (System.currentTimeMillis() - dataPushTime > 1000) {
+                            pcmInputStream.downloadedLastSecond = downloaded;
+                            downloaded = 0;
+                            dataPushTime = System.currentTimeMillis();
+                        }
+                        downloaded += read;
+                    }
+                    inputStream.close();
+                }
+                outputStream.close();
+            }
+        }.start();
+        return pcmInputStream;
     }
 
     @Override

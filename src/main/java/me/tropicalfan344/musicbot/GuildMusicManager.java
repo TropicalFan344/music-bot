@@ -30,6 +30,8 @@ public class GuildMusicManager {
 
     private final List<Track> queue = new ArrayList<>();
 
+    @Getter @Setter private long downloadSpeed;
+
     @Getter private final AudioEffectsManager audioEffectsManager;
     @Getter private final MusicBot musicBot;
 

@@ -1,6 +1,7 @@
 package me.tropicalfan344.musicbot.engines;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -31,5 +32,7 @@ public abstract class Track {
     public String getEmbedDisplay() {
         return "[" + getArtist() + " - " + getTitle() + "](" + getUrl() + ")";
     }
+
+
 
 }
