@@ -3,3 +3,5 @@
  */
 
 rootProject.name = "music-bot"
+include("music-client")
+include("music-common")

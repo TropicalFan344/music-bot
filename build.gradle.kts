@@ -7,6 +7,8 @@ plugins {
     `maven-publish`
 }
 
+val debugFacket = true
+
 repositories {
     mavenLocal()
     maven {
@@ -16,6 +18,8 @@ repositories {
     maven {
         url = uri("https://repo.maven.apache.org/maven2/")
     }
+
+    maven("https://jitpack.io")
 }
 
 dependencies {
@@ -29,6 +33,25 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0-M1")
     compileOnly("org.projectlombok:lombok:1.18.24")
     annotationProcessor("org.projectlombok:lombok:1.18.24")
+
+
+
+    implementation(project(":music-common"))
+}
+
+allprojects {
+    apply<JavaPlugin>()
+    repositories {
+        mavenLocal()
+        maven("https://jitpack.io")
+    }
+    dependencies {
+        if (debugFacket) {
+            implementation("me.fan87:facket:1.0.0-SNAPSHOT")
+        } else {
+            implementation("com.github.RektSky:Facket:2.1.1")
+        }
+    }
 }
 
 group = "me.tropicalfan344"
