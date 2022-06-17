@@ -23,9 +23,7 @@ public class CommandLoop extends MusicCommand {
     @Override
     public void onExecute(SlashCommandInteractionEvent event) {
         GuildMusicManager.LoopMode targetLoopMode = GuildMusicManager.LoopMode.valueOf(event.getOption("mode").getAsString());
-
         GuildMusicManager.getMusicManager(musicBot, event.getGuild()).setLoopMode(targetLoopMode);
-
         event.getInteraction().replyEmbeds(SimpleEmbedGenerator.generateSuccessfulEmbed(targetLoopMode.getEmoji() + " Loop mode has been changed to " + targetLoopMode.getName() + "!")).queue();
     }
 }

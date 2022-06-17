@@ -23,7 +23,7 @@ public class YouTubeEngine implements Engine {
     public static final String INNERTUBE_API_KEY = "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
 
     public static final String WEB_VERSION = "2.20220531.08.00";
-    public static final String IOS_VERSION = "17.22.3";
+    public static final String IOS_VERSION = "17.23.6";
 
     public static final OkHttpClient okHttp = new OkHttpClient.Builder()
             .build();

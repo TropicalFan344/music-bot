@@ -14,10 +14,13 @@ import okhttp3.Response;
 
 import java.io.*;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static me.tropicalfan344.musicbot.engines.impl.youtube.YouTubeEngine.INNERTUBE_API_KEY;
 
 public class YouTubeTrack extends Track {
 
@@ -223,9 +226,47 @@ public class YouTubeTrack extends Track {
         return pcmInputStream;
     }
 
+    @SneakyThrows
     @Override
     public List<Track> openRadio() {
-        // RDMM
-        return super.openRadio();
+        JsonObject object = new JsonObject();
+        object.addProperty("videoId", videoId);
+        object.addProperty("playlistId", "RD" + videoId);
+        object.add("context", YouTubeEngine.getContextIOS("en", "US"));
+
+        Request request = new Request.Builder()
+                .url("https://www.youtube.com/youtubei/v1/search?key=" + INNERTUBE_API_KEY)
+                .post(new JsonRequestBody(object))
+                .build();
+
+        Response response = YouTubeEngine.okHttp.newCall(request).execute();
+        String body = response.body().string();
+        JsonObject responseBody = YouTubeEngine.gson.fromJson(body, JsonObject.class);
+        JsonArray contents = responseBody.getAsJsonObject("contents")
+                .getAsJsonObject("twoColumnWatchNextResults")
+                .getAsJsonObject("playlist")
+                .getAsJsonObject("playlist")
+                .getAsJsonArray("contents");
+        List<Track> tracks = new ArrayList<>();
+        for (JsonElement content : contents) {
+            JsonObject videoInfo = content.getAsJsonObject().getAsJsonObject("playlistPanelVideoRenderer");
+            String lengthText = videoInfo.getAsJsonObject("lengthText").get("lengthText").getAsString();
+            String[] split = lengthText.split(":");
+            int length = 0;
+            for (int i = 0; i < split.length; i++) {
+                String s = split[split.length - i - 1];
+                int i1 = Integer.parseInt(s);
+                length += i1*Math.pow(60, i);
+            }
+            tracks.add(new YouTubeTrack(
+                    videoInfo.getAsJsonObject("title").get("simpleText").getAsString(),
+                    videoInfo.getAsJsonObject("longBylineText").getAsJsonArray("runs").get(0).getAsJsonObject().get("text").getAsString(),
+                    videoInfo.getAsJsonObject("thumbnail").getAsJsonArray("thumbnails").get(3).getAsJsonObject().get("url").getAsString(),
+                    videoInfo.get("videoId").getAsString(),
+                    length
+            ));
+
+        }
+        return tracks;
     }
 }
