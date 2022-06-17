@@ -7,7 +7,7 @@ plugins {
     `maven-publish`
 }
 
-val debugFacket = true
+val debugFacket = false
 
 repositories {
     mavenLocal()
