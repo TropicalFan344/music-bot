@@ -232,10 +232,10 @@ public class YouTubeTrack extends Track {
         JsonObject object = new JsonObject();
         object.addProperty("videoId", videoId);
         object.addProperty("playlistId", "RD" + videoId);
-        object.add("context", YouTubeEngine.getContextIOS("en", "US"));
+        object.add("context", YouTubeEngine.getContextWeb("en", "US"));
 
         Request request = new Request.Builder()
-                .url("https://www.youtube.com/youtubei/v1/search?key=" + INNERTUBE_API_KEY)
+                .url("https://www.youtube.com/youtubei/v1/next?key=" + INNERTUBE_API_KEY)
                 .post(new JsonRequestBody(object))
                 .build();
 
@@ -250,7 +250,7 @@ public class YouTubeTrack extends Track {
         List<Track> tracks = new ArrayList<>();
         for (JsonElement content : contents) {
             JsonObject videoInfo = content.getAsJsonObject().getAsJsonObject("playlistPanelVideoRenderer");
-            String lengthText = videoInfo.getAsJsonObject("lengthText").get("lengthText").getAsString();
+            String lengthText = videoInfo.getAsJsonObject("lengthText").get("simpleText").getAsString();
             String[] split = lengthText.split(":");
             int length = 0;
             for (int i = 0; i < split.length; i++) {

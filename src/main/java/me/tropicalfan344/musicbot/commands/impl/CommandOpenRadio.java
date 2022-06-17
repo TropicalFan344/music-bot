@@ -25,11 +25,11 @@ public class CommandOpenRadio extends MusicCommand {
             throw new CommandException("There is nothing in the queue");
         }
         List<Track> tracks = new ArrayList<>(nowPlaying.openRadio());
-        for (Track track : tracks) {
+        for (Track track : tracks.subList(1, tracks.size())) {
             musicManager.add(track);
         }
         event.getInteraction().replyEmbeds(new EmbedBuilder()
-                .setTitle("Added mix to queue")
+                .setTitle("Added " + (tracks.size()-1) +  " song(s) to queue")
                 .setDescription(nowPlaying.getEmbedDisplay())
                 .setImage(nowPlaying.getThumbnail())
                 .setColor(SimpleEmbedGenerator.SUCCESS)
