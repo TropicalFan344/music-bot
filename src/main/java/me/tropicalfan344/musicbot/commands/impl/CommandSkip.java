@@ -27,7 +27,7 @@ public class CommandSkip extends MusicCommand {
             for (int i = 1; i < event.getOption("index").getAsInt(); i++) {
                 musicManager.skip();
             }
-            event.getInteraction().replyEmbeds(SimpleEmbedGenerator.generateSuccessfulEmbed("Skiped " + (event.getOption("index").getAsInt() - 1) + "song(s) in queue"));
+            event.getInteraction().replyEmbeds(SimpleEmbedGenerator.generateSuccessfulEmbed("Skipped " + (event.getOption("index").getAsInt() - 1) + "song(s) in queue"));
         }
         Track skippedTrack = musicManager.getQueue().get(0);
         musicManager.skip();
