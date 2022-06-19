@@ -30,6 +30,10 @@ public abstract class MusicCommand {
         this.options = options;
     }
 
+    public void init() {
+
+    }
+
     public abstract void onExecute(SlashCommandInteractionEvent event);
 
 }
