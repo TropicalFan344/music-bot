@@ -29,4 +29,8 @@ public class CMain extends CommunicationClass {
             return null;
         }
     }
+
+    public void heartbeat() {
+        this.execute(connection);
+    }
 }

@@ -3,6 +3,7 @@ package me.tropicalfan344.musicbot;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import me.tropicalfan344.musicbot.connection.CTrack;
 import me.tropicalfan344.musicbot.connection.ConnectedClient;
 import me.tropicalfan344.musicbot.effects.AudioEffectsManager;
@@ -154,7 +155,10 @@ public class GuildMusicManager {
     /**
      * @param skip If it's skipping, and it's in "repeat one" mode, it will still skip it
      */
-    private void nextSong(boolean skip) {
+    private boolean nextSong(boolean skip) {
+        if (queue.isEmpty()) {
+            return false;
+        }
         if (loopMode == LoopMode.OFF) {
             queue.remove(0); // Remove the first one
         }
@@ -168,6 +172,7 @@ public class GuildMusicManager {
         if (loopMode == LoopMode.ALL) {
             queue.add(queue.remove(0)); // Remove the first one, and add it to the bottom of the queue
         }
+        return true;
     }
 
     public void refreshQueue(boolean force) {
@@ -242,6 +247,21 @@ public class GuildMusicManager {
         refreshQueue(false);
     }
 
+    public void move(int from, int to) {
+        if (from >= queue.size()) {
+            throw new IndexOutOfBoundsException("There are only " + queue.size() + " song(s) in queue, but you've entered " + from + " (from)");
+        }
+        if (to >= queue.size()) {
+            throw new IndexOutOfBoundsException("There are only " + queue.size() + " song(s) in queue, but you've entered " + to + " (to)");
+        }
+        if (from == to) {
+            throw new IllegalArgumentException("The source is equal to the dest. (" + from + " = " + to + ")");
+        }
+        Track track = queue.remove(from);
+        queue.add(to, track);
+        refreshQueue(false);
+    }
+
     public void insert(@Range(from = 0, to = Long.MAX_VALUE) int index, Track track) {
         queue.add(Math.min(index, Math.max(0, queue.size() - 1)), track);
         refreshQueue(false);
@@ -249,6 +269,19 @@ public class GuildMusicManager {
 
     public void playMusic(Track track) {
         insert(0, track);
+    }
+
+    public int skip(int amount) {
+        int totalAmount = 0;
+        for (int i = 0; i < amount; i++) {
+            if (nextSong(true)) {
+                totalAmount++;
+            } else {
+                break;
+            }
+        }
+        refreshQueue(true);
+        return totalAmount;
     }
 
     public void skip() {

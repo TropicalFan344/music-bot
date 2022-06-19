@@ -1,5 +1,6 @@
 import club.bottomservices.discordrpc.lib.RichPresence;
 import me.tropicalfan344.musicbot.connection.CTrack;
+import me.tropicalfan344.musicbot.connection.MusicBotConstants;
 import me.tropicalfan344.musicbot.connection.communication.SMain;
 
 public class SMainImpl extends SMain {
@@ -13,13 +14,15 @@ public class SMainImpl extends SMain {
             Main.client.sendPresence(new RichPresence(null, null, null, null, null, null, null));
             Main.client.sendPresence(new RichPresence.Builder()
                     .setText("Idle", null)
-                    .setAssets("icon", "PRBB Styled Music Bot", null, null)
+                    .setAssets("icon", "Implemented Protocol Version: " + MusicBotConstants.protocolVersion + ".0", null, null)
+                    .addButton("What is this?", "https://gist.github.com/fan87/63cc826ecca0b581226c5c8b552d9695")
                     .build());
         } else {
             Main.client.sendPresence(new RichPresence.Builder()
                     .setText(track.title, "by " + track.artist)
-                    .setAssets("icon", "PRBB Styled Music Bot", null, null)
+                    .setAssets("icon", "Implemented Protocol Version: " + MusicBotConstants.protocolVersion + ".0", null, null)
                     .addButton("Listen on YouTube", track.url)
+                    .addButton("What is this?", "https://gist.github.com/fan87/63cc826ecca0b581226c5c8b552d9695")
                     .build());
         }
     }
