@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 public class CommandMove extends MusicCommand {
     public CommandMove() {
-        super("remove", "Remove song from queue",
+        super("move", "Move a song in the queue",
                 new OptionData(OptionType.INTEGER, "source", "Index of the song to be moved (Starts from 1)", true),
                 new OptionData(OptionType.INTEGER, "dest", "New index of the song. (Starts from 1)", true)
         );
