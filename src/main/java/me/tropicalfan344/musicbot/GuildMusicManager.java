@@ -247,6 +247,26 @@ public class GuildMusicManager {
         refreshQueue(false);
     }
 
+    public void move(int from, int to) {
+        if (from >= queue.size()) {
+            throw new IndexOutOfBoundsException("There are only " + queue.size() + " song(s) in queue, but you've entered " + from + " (from)");
+        }
+        if (to >= queue.size()) {
+            throw new IndexOutOfBoundsException("There are only " + queue.size() + " song(s) in queue, but you've entered " + to + " (to)");
+        }
+        if (from == to) {
+            throw new IllegalArgumentException("The source is equal to the dest. (" + from + " = " + to + ")");
+        }
+        Track track = queue.get(from);
+        queue.add(to, track);
+        if (to > from) {
+            queue.remove(from);
+        } else {
+            queue.remove(from + 1);
+        }
+        refreshQueue(false);
+    }
+
     public void insert(@Range(from = 0, to = Long.MAX_VALUE) int index, Track track) {
         queue.add(Math.min(index, Math.max(0, queue.size() - 1)), track);
         refreshQueue(false);

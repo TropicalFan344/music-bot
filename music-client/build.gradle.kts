@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "me.tropicalfan344"
@@ -35,5 +36,10 @@ tasks {
     }
     compileJava {
         options.encoding = "UTF-8"
+    }
+    shadowJar {
+        manifest {
+            attributes["Main-Class"] = "Main"
+        }
     }
 }
