@@ -21,8 +21,8 @@ public class CommandMove extends MusicCommand {
     @Override
     public void onExecute(SlashCommandInteractionEvent event) {
         GuildMusicManager manager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
-        int from = event.getOption("source").getAsInt() + 1;
-        int to = event.getOption("dest").getAsInt() + 1;
+        int from = event.getOption("source").getAsInt();
+        int to = event.getOption("dest").getAsInt();
         if (from > manager.getQueue().size()) {
             throw new CommandException("There are only " + manager.getQueue().size() + " song(s) in queue, but you've entered " + from + " (from)");
         }
