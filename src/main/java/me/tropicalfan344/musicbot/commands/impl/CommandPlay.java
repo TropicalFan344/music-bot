@@ -9,6 +9,8 @@ import me.tropicalfan344.musicbot.engines.Track;
 import me.tropicalfan344.musicbot.engines.impl.youtube.YouTubeEngine;
 import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.GuildVoiceState;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -25,18 +27,26 @@ public class CommandPlay extends MusicCommand {
     @Override
     public void onExecute(SlashCommandInteractionEvent event) {
         if (!event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).getVoiceState().inAudioChannel()) {
-            throw new CommandException("I'm not in a voice channel, use /join to let me join your voice channel.");
-        } else {
-            event.getInteraction().deferReply().queue();
-            GuildMusicManager musicManager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
-            Track targetTrack = musicManager.findSong(event.getOption("query").getAsString());
-            musicManager.playMusic(targetTrack);
-            event.getHook().editOriginalEmbeds(new EmbedBuilder()
-                    .setTitle("Now Playing")
-                    .setDescription(targetTrack.getEmbedDisplay())
-                    .setImage(targetTrack.getThumbnail())
-                    .setColor(SimpleEmbedGenerator.SUCCESS)
-                    .build()).queue();
+            GuildVoiceState selfVoiceState = event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).getVoiceState();
+            if (!event.getMember().getVoiceState().inAudioChannel()){
+                throw new CommandException("You are not in a voice channel right now!");
+            }
+            if (selfVoiceState.inAudioChannel()) {
+                throw new CommandException("The bot is already in a voice channel! Please use /leave before letting it join another.");
+            }
+
+            VoiceChannel voiceChannel = ((VoiceChannel) event.getMember().getVoiceState().getChannel());
+            GuildMusicManager.getMusicManager(musicBot, event.getGuild()).joinVoiceChannel(voiceChannel);
         }
+        event.getInteraction().deferReply().queue();
+        GuildMusicManager musicManager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
+        Track targetTrack = musicManager.findSong(event.getOption("query").getAsString());
+        musicManager.playMusic(targetTrack);
+        event.getHook().editOriginalEmbeds(new EmbedBuilder()
+                .setTitle("Now Playing")
+                .setDescription(targetTrack.getEmbedDisplay())
+                .setImage(targetTrack.getThumbnail())
+                .setColor(SimpleEmbedGenerator.SUCCESS)
+                .build()).queue();
     }
 }
