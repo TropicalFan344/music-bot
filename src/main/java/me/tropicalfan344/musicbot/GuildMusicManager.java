@@ -257,13 +257,8 @@ public class GuildMusicManager {
         if (from == to) {
             throw new IllegalArgumentException("The source is equal to the dest. (" + from + " = " + to + ")");
         }
-        Track track = queue.get(from);
+        Track track = queue.remove(from);
         queue.add(to, track);
-        if (to > from) {
-            queue.remove(from);
-        } else {
-            queue.remove(from + 1);
-        }
         refreshQueue(false);
     }
 
