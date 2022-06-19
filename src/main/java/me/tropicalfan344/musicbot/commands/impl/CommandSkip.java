@@ -20,18 +20,17 @@ public class CommandSkip extends MusicCommand {
         if (musicManager.getQueue().isEmpty()) {
             throw new CommandException("Couldn't skip anything");
         }
+        int amount = 1;
         if (event.getOption("index") != null) {
-            if (event.getOption("index").getAsInt() > musicManager.getQueue().size() + 1) {
-                throw  new CommandException("There is not that much songs in queue");
-            }
-            for (int i = 1; i < event.getOption("index").getAsInt(); i++) {
-                musicManager.skip();
-            }
-            event.getInteraction().replyEmbeds(SimpleEmbedGenerator.generateSuccessfulEmbed("Skiped " + (event.getOption("index").getAsInt() - 1) + "song(s) in queue"));
+            amount = event.getOption("index").getAsInt();
         }
         Track skippedTrack = musicManager.getQueue().get(0);
-        musicManager.skip();
-        event.getInteraction().replyEmbeds(SimpleEmbedGenerator.generateSuccessfulEmbed("⏭ Skipped " + skippedTrack.getEmbedDisplay())).queue();
+        int skip = musicManager.skip(amount);
+        if (amount == 1) {
+            event.getInteraction().replyEmbeds(SimpleEmbedGenerator.generateSuccessfulEmbed("⏭ Skipped " + skippedTrack.getEmbedDisplay())).queue();
+        } else {
+            event.getInteraction().replyEmbeds(SimpleEmbedGenerator.generateSuccessfulEmbed("⏭ Skipped " + skip + " songs")).queue();
+        }
 
     }
 }

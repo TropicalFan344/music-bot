@@ -45,6 +45,17 @@ public class Main {
         }
         System.out.println("Connection Established: " + response);
 
+        new Thread() {
+            @Override
+            @SneakyThrows
+            public void run() {
+                while (!Thread.interrupted()) {
+                    cMain.heartbeat();
+                    Thread.sleep(1000);
+                }
+            }
+        }.start();
+
         client.connect();
     }
 

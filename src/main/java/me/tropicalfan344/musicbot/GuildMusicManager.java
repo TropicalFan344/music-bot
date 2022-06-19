@@ -3,6 +3,7 @@ package me.tropicalfan344.musicbot;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import me.tropicalfan344.musicbot.connection.CTrack;
 import me.tropicalfan344.musicbot.connection.ConnectedClient;
 import me.tropicalfan344.musicbot.effects.AudioEffectsManager;
@@ -154,7 +155,10 @@ public class GuildMusicManager {
     /**
      * @param skip If it's skipping, and it's in "repeat one" mode, it will still skip it
      */
-    private void nextSong(boolean skip) {
+    private boolean nextSong(boolean skip) {
+        if (queue.isEmpty()) {
+            return false;
+        }
         if (loopMode == LoopMode.OFF) {
             queue.remove(0); // Remove the first one
         }
@@ -168,6 +172,7 @@ public class GuildMusicManager {
         if (loopMode == LoopMode.ALL) {
             queue.add(queue.remove(0)); // Remove the first one, and add it to the bottom of the queue
         }
+        return true;
     }
 
     public void refreshQueue(boolean force) {
@@ -249,6 +254,19 @@ public class GuildMusicManager {
 
     public void playMusic(Track track) {
         insert(0, track);
+    }
+
+    public int skip(int amount) {
+        int totalAmount = 0;
+        for (int i = 0; i < amount; i++) {
+            if (nextSong(true)) {
+                totalAmount++;
+            } else {
+                break;
+            }
+        }
+        refreshQueue(true);
+        return totalAmount;
     }
 
     public void skip() {
