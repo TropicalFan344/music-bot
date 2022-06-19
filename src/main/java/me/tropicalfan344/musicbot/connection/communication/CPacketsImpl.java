@@ -2,14 +2,19 @@ package me.tropicalfan344.musicbot.connection.communication;
 
 import me.tropicalfan344.musicbot.MusicBot;
 import me.tropicalfan344.musicbot.connection.ConnectedClient;
+import me.tropicalfan344.musicbot.connection.ConnectionManager;
 import net.dv8tion.jda.api.entities.User;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class CMainImpl extends CMain {
+public class CPacketsImpl extends CPackets {
 
     public static MusicBot bot;
+
+    public ConnectedClient getBoundClient() {
+        return MusicBot.instance.getConnectionManager().getClientMap().get(sender);
+    }
+    public User getBoundUser() {
+        return getBoundClient().getLinkedUser();
+    }
 
     @Override
     public String link(String key) {

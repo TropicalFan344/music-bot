@@ -110,7 +110,7 @@ public class YouTubeTrack extends Track {
         outputFile.createNewFile();
 
         Process process = new ProcessBuilder("ffmpeg", "-i", "pipe:", "-y", "-ar", "48000", "-ac", "2", "-f", "s16be", "-acodec", "pcm_s16be", outputFile.getAbsolutePath()).start();
-        System.out.println("ffmpeg -i pipe: -y -ar 48000 -ac 2 -f s16be -acodec pcm_s16be pipe:1");
+        System.out.println("[YouTubeTrack] Playing   " + getEmbedDisplay());
 
         new Thread(() -> {
             try {
@@ -118,7 +118,7 @@ public class YouTubeTrack extends Track {
                 while (true) {
                     int read = errorStream.read();
                     if (read == -1) break;
-                    System.err.write(read);
+//                    System.err.write(read);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -144,29 +144,33 @@ public class YouTubeTrack extends Track {
 
             @Override
             public int read() throws IOException {
-                currentIndex++;
+                try {
+                    currentIndex++;
 
-                if (targetStream != null) {
-                    int read = targetStream.read();
-                    if (read != -1) {
-                        return read;
-                    }
-                }
-                int read = -1;
-                while (read == -1 && process.isAlive()) {
                     if (targetStream != null) {
-                        targetStream.close();
-                    }
-                    targetStream = new FileInputStream(outputFile);
-                    for (int i = 0; i < currentIndex; i++) {
-                        read = targetStream.read();
-                        if (read == -1) {
-                            break;
+                        int read = targetStream.read();
+                        if (read != -1) {
+                            return read;
                         }
                     }
-                }
+                    int read = -1;
+                    while (read == -1 && process.isAlive()) {
+                        if (targetStream != null) {
+                            targetStream.close();
+                        }
+                        targetStream = new FileInputStream(outputFile);
+                        for (int i = 0; i < currentIndex; i++) {
+                            read = targetStream.read();
+                            if (read == -1) {
+                                break;
+                            }
+                        }
+                    }
 
-                return read;
+                    return read;
+                } catch (IOException ignored) {
+                    return -1;
+                }
             }
 
             @Override

@@ -4,15 +4,15 @@ import me.fan87.facket.Facket;
 import me.fan87.facket.api.CommunicationClass;
 import me.fan87.facket.api.server.FacketConnection;
 
-public class CMain extends CommunicationClass {
+public class CPackets extends CommunicationClass {
     private final FacketConnection connection;
 
-    public CMain() {
+    public CPackets() {
         super();
         this.connection = null;
     }
 
-    public CMain(Facket facket, FacketConnection connection) {
+    public CPackets(Facket facket, FacketConnection connection) {
         super(facket);
         this.connection = connection;
     }

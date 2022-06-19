@@ -1,12 +1,17 @@
 import club.bottomservices.discordrpc.lib.RichPresence;
 import me.tropicalfan344.musicbot.connection.CTrack;
 import me.tropicalfan344.musicbot.connection.MusicBotConstants;
-import me.tropicalfan344.musicbot.connection.communication.SMain;
+import me.tropicalfan344.musicbot.connection.communication.SPackets;
 
-public class SMainImpl extends SMain {
+public class SPacketsImpl extends SPackets {
 
     @Override
-    public void updateSong(CTrack track) {
+    public void heartbeat() {
+
+    }
+
+    @Override
+    public void updateStatus(CTrack track) {
         System.out.println("Now Playing: " + track);
 
 

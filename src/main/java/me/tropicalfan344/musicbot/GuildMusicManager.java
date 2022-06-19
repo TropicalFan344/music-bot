@@ -3,12 +3,10 @@ package me.tropicalfan344.musicbot;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import me.tropicalfan344.musicbot.connection.CTrack;
 import me.tropicalfan344.musicbot.connection.ConnectedClient;
 import me.tropicalfan344.musicbot.effects.AudioEffectsManager;
 import me.tropicalfan344.musicbot.engines.Track;
-import net.dv8tion.jda.api.audio.SpeakingMode;
 import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
@@ -20,7 +18,6 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
-import java.net.SocketException;
 import java.util.*;
 
 public class GuildMusicManager {
@@ -56,7 +53,7 @@ public class GuildMusicManager {
                             }
                             if (client.getLinkedUser().getIdLong() == event.getMember().getUser().getIdLong()) {
                                 try {
-                                    client.getCommunicationClass().updateSong(null);
+                                    client.getCommunicationClass().updateStatus(null);
                                 } catch (Exception e) {}
                             }
                             return;
@@ -76,7 +73,7 @@ public class GuildMusicManager {
                             }
                             if (client.getLinkedUser().getIdLong() == event.getMember().getUser().getIdLong()) {
                                 try {
-                                    client.getCommunicationClass().updateSong(null);
+                                    client.getCommunicationClass().updateStatus(null);
                                 } catch (Exception e) {}
                             }
                         }
@@ -128,11 +125,11 @@ public class GuildMusicManager {
                     if (getQueue().size() >= 1) {
                         Track nowPlaying = getQueue().get(0);
                         try {
-                            client.getCommunicationClass().updateSong(new CTrack(nowPlaying.getTitle(), nowPlaying.getArtist(), nowPlaying.getThumbnail(), nowPlaying.getUrl(), nowPlaying.getLength()));
+                            client.getCommunicationClass().updateStatus(new CTrack(nowPlaying.getTitle(), nowPlaying.getArtist(), nowPlaying.getThumbnail(), nowPlaying.getUrl(), nowPlaying.getLength()));
                         } catch (Exception e) {}
                     } else {
                         try {
-                            client.getCommunicationClass().updateSong(null);
+                            client.getCommunicationClass().updateStatus(null);
                         } catch (Exception e) {}
                     }
                     return;
@@ -184,7 +181,7 @@ public class GuildMusicManager {
                     }
                     if (getGuildAudioManager().getConnectedChannel().getMembers().stream().anyMatch(member -> member.getUser().getIdLong() == client.getLinkedUser().getIdLong())) {
                         try {
-                            client.getCommunicationClass().updateSong(null);
+                            client.getCommunicationClass().updateStatus(null);
                         } catch (Exception e) {}
                     }
                 }
@@ -203,7 +200,7 @@ public class GuildMusicManager {
                         }
                         if (getGuildAudioManager().getConnectedChannel().getMembers().stream().anyMatch(member -> member.getUser().getIdLong() == client.getLinkedUser().getIdLong())) {
                             try {
-                                client.getCommunicationClass().updateSong(new CTrack(nowPlaying.getTitle(), nowPlaying.getArtist(), nowPlaying.getThumbnail(), nowPlaying.getUrl(), nowPlaying.getLength()));
+                                client.getCommunicationClass().updateStatus(new CTrack(nowPlaying.getTitle(), nowPlaying.getArtist(), nowPlaying.getThumbnail(), nowPlaying.getUrl(), nowPlaying.getLength()));
                             } catch (Exception ignored) {}
                         }
                     }
@@ -224,7 +221,7 @@ public class GuildMusicManager {
                         }
                         if (getGuildAudioManager().getConnectedChannel().getMembers().stream().anyMatch(member -> member.getUser().getIdLong() == client.getLinkedUser().getIdLong())) {
                             try {
-                                client.getCommunicationClass().updateSong(null);
+                                client.getCommunicationClass().updateStatus(null);
                             } catch (Exception e) {}
                         }
                     }
