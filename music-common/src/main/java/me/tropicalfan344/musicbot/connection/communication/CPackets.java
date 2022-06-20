@@ -4,6 +4,8 @@ import me.fan87.facket.Facket;
 import me.fan87.facket.api.CommunicationClass;
 import me.fan87.facket.api.server.FacketConnection;
 
+import java.io.IOException;
+
 public class CPackets extends CommunicationClass {
     private final FacketConnection connection;
 
@@ -30,7 +32,7 @@ public class CPackets extends CommunicationClass {
         }
     }
 
-    public void heartbeat() {
+    public void heartbeat() throws IOException {
         this.execute(connection);
     }
 }

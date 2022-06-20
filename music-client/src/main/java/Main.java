@@ -7,11 +7,15 @@ import me.tropicalfan344.musicbot.connection.MusicBotConnection;
 import me.tropicalfan344.musicbot.connection.MusicBotConstants;
 import me.tropicalfan344.musicbot.connection.communication.CPackets;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Scanner;
 
 public class Main {
     public static DiscordRPCClient client = new DiscordRPCClient("987450736470278225");
+
+    public static FacketClient facket = null;
+    public static CPackets cMain = null;
 
     @SneakyThrows
     public static void main(String[] args) {
@@ -27,7 +31,32 @@ public class Main {
         System.out.print("Please enter the link key\n>> ");
         Scanner scanner = new Scanner(System.in);
         InetSocketAddress inetSocketAddress = new InetSocketAddress(args[0], port);
-        FacketClient facket = new FacketClient(inetSocketAddress, MusicBotConstants.bufferSize, MusicBotConstants.protocolVersion, 0);
+
+        String key = scanner.nextLine();
+        connect(inetSocketAddress, key);
+        new Thread() {
+            @Override
+            @SneakyThrows
+            public void run() {
+                while (!Thread.interrupted()) {
+                    try {
+                        cMain.heartbeat();
+                        Thread.sleep(1000);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        System.out.println("Reconnecting...");
+                        connect(inetSocketAddress, key);
+                    }
+                }
+            }
+        }.start();
+
+        client.connect();
+    }
+
+    @SneakyThrows
+    public static void connect(InetSocketAddress inetSocketAddress, String key) {
+        facket = new FacketClient(inetSocketAddress, MusicBotConstants.bufferSize, MusicBotConstants.protocolVersion, 0);
         MusicBotConnection.init(facket);
         facket.setConnectionHandler(new Facket.ConnectionHandler() {
             @Override
@@ -37,26 +66,13 @@ public class Main {
             }
         });
         facket.start();
-        CPackets cMain = new CPackets(facket, facket.getConnection());
-        String response = cMain.link(scanner.nextLine());
+        cMain = new CPackets(facket, facket.getConnection());
+        String response = cMain.link(key);
         if (response == null) {
             System.err.println("Invalid Key!");
             System.exit(-1);
         }
         System.out.println("Connection Established: " + response);
-
-        new Thread() {
-            @Override
-            @SneakyThrows
-            public void run() {
-                while (!Thread.interrupted()) {
-                    cMain.heartbeat();
-                    Thread.sleep(1000);
-                }
-            }
-        }.start();
-
-        client.connect();
     }
 
 }
