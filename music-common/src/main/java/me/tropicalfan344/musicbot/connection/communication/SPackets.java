@@ -6,27 +6,28 @@ import me.fan87.facket.api.annotations.FacketAsync;
 import me.fan87.facket.api.server.FacketConnection;
 import me.tropicalfan344.musicbot.connection.CTrack;
 
-public class SMain extends CommunicationClass {
+public class SPackets extends CommunicationClass {
     private final FacketConnection connection;
 
-    public SMain() {
+    public SPackets() {
         super();
         this.connection = null;
     }
 
-    public SMain(Facket facket, FacketConnection connection) {
+    public SPackets(Facket facket, FacketConnection connection) {
         super(facket);
         this.connection = connection;
     }
 
+    public void heartbeat() {
+        this.execute(connection);
+    }
+
     @FacketAsync
-    public void updateSong(CTrack track) {
-        System.out.println("Update");
-        for (StackTraceElement stackTraceElement : Thread.currentThread().getStackTrace()) {
-            System.out.println(stackTraceElement);
-        }
+    public void updateStatus(CTrack track) {
         this.execute(connection, track);
     }
+
 
     @Override
     public Class<?> getBoundClass() {

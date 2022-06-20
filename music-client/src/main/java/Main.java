@@ -5,7 +5,7 @@ import me.fan87.facket.api.FacketClient;
 import me.fan87.facket.api.server.FacketConnection;
 import me.tropicalfan344.musicbot.connection.MusicBotConnection;
 import me.tropicalfan344.musicbot.connection.MusicBotConstants;
-import me.tropicalfan344.musicbot.connection.communication.CMain;
+import me.tropicalfan344.musicbot.connection.communication.CPackets;
 
 import java.net.InetSocketAddress;
 import java.util.Scanner;
@@ -37,7 +37,7 @@ public class Main {
             }
         });
         facket.start();
-        CMain cMain = new CMain(facket, facket.getConnection());
+        CPackets cMain = new CPackets(facket, facket.getConnection());
         String response = cMain.link(scanner.nextLine());
         if (response == null) {
             System.err.println("Invalid Key!");

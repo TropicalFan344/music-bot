@@ -36,11 +36,14 @@ public class CommandsManager {
 
         for (Class<? extends MusicCommand> commandClazz : musicBot.getReflections().getSubTypesOf(MusicCommand.class)) {
             try {
-                MusicCommand command = commandClazz.newInstance();
+                MusicCommand command = commandClazz.getConstructor().newInstance();
                 command.musicBot = musicBot;
                 commands.add(command);
-            } catch (Exception e) {
+                command.init();
+            } catch (NoSuchMethodException ignored) {
 //                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 

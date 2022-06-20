@@ -41,16 +41,9 @@ public class Test {
             for (int i = 0; i < readBuffer.length; i+=2) {
                 byte old = readBuffer[i+1];
                 int i1 = (int) ((readBuffer[i + 1] << 8) | (readBuffer[i] & 0xff));
-//                float fuck = i1/Float.MAX_VALUE;
-//                fuck *= 0.3;
-//                fuck = Math.max(Math.min(fuck, 1), -1);
                 i1*=0.5;
                 readBuffer[i] = ((byte) i1);
                 readBuffer[i+1] = (byte) (i1 >> 8);
-//                if (old != readBuffer[i+1]) {
-//                    System.out.println(readBuffer[i+1] + "/" + old + "/" + i1 + "/" + (old << 8));
-//                }
-
             }
             device.write(readBuffer, 0, read);
         }
