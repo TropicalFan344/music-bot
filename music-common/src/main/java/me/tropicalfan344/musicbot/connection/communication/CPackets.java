@@ -24,7 +24,7 @@ public class CPackets extends CommunicationClass {
     @Override
     public Class<?> getBoundClass() {
         try {
-            return Class.forName("me.tropicalfan344.musicbot.connection.communication.CMainImpl");
+            return Class.forName("me.tropicalfan344.musicbot.connection.communication.CPacketsImpl");
         } catch (ClassNotFoundException ignored) {
             return null;
         }
