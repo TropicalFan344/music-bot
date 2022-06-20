@@ -55,8 +55,13 @@ public class ConnectionManager {
                         } catch (Exception ignored) {
                             System.out.println("[!] [RPC] Client has timed out : " + connection.getSocket().getInetAddress());
                             connection.close();
+                            return;
                         }
-                        Thread.sleep(1000);
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 });
                 System.out.println("[+] [RPC] Client has connected: " + connection.getSocket().getInetAddress());
