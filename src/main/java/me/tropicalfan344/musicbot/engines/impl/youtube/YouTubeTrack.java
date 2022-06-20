@@ -169,7 +169,7 @@ public class YouTubeTrack extends Track {
 
                     return read;
                 } catch (IOException ignored) {
-                    return -1;
+                    return 0; // So it won't attempt to close it. Also, since it's PCM, it should be empty sound
                 }
             }
 

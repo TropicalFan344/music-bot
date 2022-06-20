@@ -207,8 +207,6 @@ public class GuildMusicManager {
                 }
 
                 sendHandler = new TrackSendHandler(queue.get(0), this, () -> {
-                    System.out.println("Next Song!");
-                    new Exception().printStackTrace();
                     nextSong(false);
                     refreshQueue(true);
                 });
