@@ -29,7 +29,7 @@ public class YouTubeTrack extends Track {
     private final String videoId;
 
     @SneakyThrows
-    public static YouTubeTrack getByVideoId(String id) {
+    public static YouTubeTrack getVideoById(String id) {
         JsonObject requestBody = new JsonObject();
         requestBody.add("context", YouTubeEngine.getContextIOS("en", "US"));
         requestBody.addProperty("videoId", id);
