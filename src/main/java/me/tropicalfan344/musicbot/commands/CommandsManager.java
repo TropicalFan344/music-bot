@@ -54,7 +54,8 @@ public class CommandsManager {
 
         String[] guilds = new String[] {
                 "979552134850834492",
-                "854997016996216862"
+                "854997016996216862",
+                "988871600701075557"
         };
         for (String guild : guilds) {
             if (musicBot.getJda().getGuildById(guild) == null) {
