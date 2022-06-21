@@ -51,11 +51,19 @@ public class CommandsManager {
             commands.add(new CommandEffectsAdd(aClass.newInstance()));
         }
 
-        CommandListUpdateAction action = musicBot.getJda().getGuildById("854997016996216862w").updateCommands();
-        for (MusicCommand command : commands) {
-            action.addCommands(command.getCommandData());
+
+        String[] guilds = new String[] {
+                "979552134850834492",
+                "854997016996216862"
+        };
+        for (String guild : guilds) {
+            CommandListUpdateAction action = musicBot.getJda().getGuildById(guild).updateCommands();
+            for (MusicCommand command : commands) {
+                action.addCommands(command.getCommandData());
+            }
+            action.queue();
         }
-        action.queue();
+
 
         // Register Listeners
         musicBot.getJda().addEventListener(new ListenerAdapter() {

@@ -32,7 +32,7 @@ public class SPackets extends CommunicationClass {
     @Override
     public Class<?> getBoundClass() {
         try {
-            return Class.forName("SMainImpl");
+            return Class.forName("SPacketsImpl");
         } catch (ClassNotFoundException ignored) {
             return null;
         }
