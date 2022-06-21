@@ -133,6 +133,9 @@ public class YouTubePlayList extends PlayList {
                     .getAsJsonArray("continuationItems");
             for (JsonElement content : contents) {
                 JsonObject playlistVideoRenderer = content.getAsJsonObject().getAsJsonObject("playlistVideoRenderer");
+                if (playlistVideoRenderer == null) {
+                    continue;
+                }
                 String title = playlistVideoRenderer.getAsJsonObject("title").getAsJsonArray("runs").get(0).getAsJsonObject().get("text").getAsString();
                 String artist = playlistVideoRenderer.getAsJsonObject("shortBylineText").getAsJsonArray("runs").get(0).getAsJsonObject().get("text").getAsString();
                 String thumbnail = playlistVideoRenderer.getAsJsonObject("thumbnail").getAsJsonArray("thumbnails").get(1).getAsJsonObject().get("url").getAsString();

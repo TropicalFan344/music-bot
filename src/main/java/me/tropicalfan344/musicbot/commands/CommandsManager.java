@@ -57,6 +57,9 @@ public class CommandsManager {
                 "854997016996216862"
         };
         for (String guild : guilds) {
+            if (musicBot.getJda().getGuildById(guild) == null) {
+                continue;
+            }
             CommandListUpdateAction action = musicBot.getJda().getGuildById(guild).updateCommands();
             for (MusicCommand command : commands) {
                 action.addCommands(command.getCommandData());
