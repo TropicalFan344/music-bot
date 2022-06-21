@@ -120,7 +120,7 @@ public class YouTubePlayList extends PlayList {
         if (continuation != null) {
             JsonObject object = new JsonObject();
             object.addProperty("continuation", continuation);
-            object.add("context", YouTubeEngine.getContextIOS("en", "US"));
+            object.add("context", YouTubeEngine.getContextWeb("en", "US"));
             Request request = new Request.Builder()
                     .url("https://www.youtube.com/youtubei/v1/browse?key=" + INNERTUBE_API_KEY)
                     .post(new JsonRequestBody(object))
@@ -128,19 +128,17 @@ public class YouTubePlayList extends PlayList {
             Response response = YouTubeEngine.okHttp.newCall(request).execute();
             String body = response.body().string();
             JsonObject responseBody = YouTubeEngine.gson.fromJson(body, JsonObject.class);
-            JsonArray contents = responseBody.getAsJsonObject("continuationContents")
-                    .getAsJsonObject("playlistVideoListContinuation")
-                    .getAsJsonArray("contents");
+            JsonArray contents = responseBody.getAsJsonArray("onResponseReceivedActions").get(0).getAsJsonObject()
+                    .getAsJsonObject("appendContinuationItemsAction")
+                    .getAsJsonArray("continuationItems");
             for (JsonElement content : contents) {
                 JsonObject playlistVideoRenderer = content.getAsJsonObject().getAsJsonObject("playlistVideoRenderer");
-                if (playlistVideoRenderer != null) {
-                    String title = playlistVideoRenderer.getAsJsonObject("title").getAsJsonArray("runs").get(0).getAsJsonObject().get("text").getAsString();
-                    String artist = playlistVideoRenderer.getAsJsonObject("shortBylineText").getAsJsonArray("runs").get(0).getAsJsonObject().get("text").getAsString();
-                    String thumbnail = playlistVideoRenderer.getAsJsonObject("thumbnail").getAsJsonArray("thumbnails").get(2).getAsJsonObject().get("url").getAsString();
-                    String videoId = playlistVideoRenderer.get("videoId").getAsString();
-                    int length = Integer.parseInt(playlistVideoRenderer.get("lengthSeconds").getAsString());
-                    track.add(new YouTubeTrack(title, artist, thumbnail, videoId, length));
-                }
+                String title = playlistVideoRenderer.getAsJsonObject("title").getAsJsonArray("runs").get(0).getAsJsonObject().get("text").getAsString();
+                String artist = playlistVideoRenderer.getAsJsonObject("shortBylineText").getAsJsonArray("runs").get(0).getAsJsonObject().get("text").getAsString();
+                String thumbnail = playlistVideoRenderer.getAsJsonObject("thumbnail").getAsJsonArray("thumbnails").get(1).getAsJsonObject().get("url").getAsString();
+                String videoId = playlistVideoRenderer.get("videoId").getAsString();
+                int length = Integer.parseInt(playlistVideoRenderer.get("lengthSeconds").getAsString());
+                track.add(new YouTubeTrack(title, artist, thumbnail, videoId, length));
             }
             return this;
         }
