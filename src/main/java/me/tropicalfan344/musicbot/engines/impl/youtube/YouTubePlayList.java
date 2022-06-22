@@ -29,7 +29,7 @@ public class YouTubePlayList extends PlayList {
     private final String listTitle;
     private final int size;
     private String continuation;
-    private List<Track> track = new ArrayList<>();
+    private List<Track> tracks = new ArrayList<>();
 
     @SneakyThrows
     public YouTubePlayList(String playListId) {
@@ -92,7 +92,7 @@ public class YouTubePlayList extends PlayList {
                 String thumbnail = playlistVideoRenderer.getAsJsonObject("thumbnail").getAsJsonArray("thumbnails").get(2).getAsJsonObject().get("url").getAsString();
                 String videoId = playlistVideoRenderer.get("videoId").getAsString();
                 int length = Integer.parseInt(playlistVideoRenderer.get("lengthSeconds").getAsString());
-                track.add(new YouTubeTrack(title, artist, thumbnail, videoId, length));
+                tracks.add(new YouTubeTrack(title, artist, thumbnail, videoId, length));
             }
         }
     }
@@ -110,13 +110,14 @@ public class YouTubePlayList extends PlayList {
 
     @Override
     public List<Track> getTracks() {
-        return track;
+        return tracks;
     }
 
     @Override
     @SneakyThrows
     public @Nullable PlayList getNextPage() {
-        track.clear();
+        tracks.clear();
+        System.out.println(continuation + " / " + (continuation != null));
         if (continuation != null) {
             JsonObject object = new JsonObject();
             object.addProperty("continuation", continuation);
@@ -137,8 +138,10 @@ public class YouTubePlayList extends PlayList {
                     String token = content.getAsJsonObject().getAsJsonObject("continuationItemRenderer").getAsJsonObject("continuationEndpoint").getAsJsonObject("continuationCommand").get("token").getAsString();
                     if (token != null) {
                         continuation = token;
+                        System.out.println("returned this");
                         return this;
                     }
+                    System.out.println("continued [143]");
                     continue;
                 }
                 String title = playlistVideoRenderer.getAsJsonObject("title").getAsJsonArray("runs").get(0).getAsJsonObject().get("text").getAsString();
@@ -146,9 +149,12 @@ public class YouTubePlayList extends PlayList {
                 String thumbnail = playlistVideoRenderer.getAsJsonObject("thumbnail").getAsJsonArray("thumbnails").get(1).getAsJsonObject().get("url").getAsString();
                 String videoId = playlistVideoRenderer.get("videoId").getAsString();
                 int length = Integer.parseInt(playlistVideoRenderer.get("lengthSeconds").getAsString());
-                track.add(new YouTubeTrack(title, artist, thumbnail, videoId, length));
+                tracks.add(new YouTubeTrack(title, artist, thumbnail, videoId, length));
             }
+            continuation = null;
+            return this;
         }
+        System.out.println("returned null");
         return null;
     }
 }

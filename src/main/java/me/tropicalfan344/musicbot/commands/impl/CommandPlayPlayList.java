@@ -51,6 +51,7 @@ public class CommandPlayPlayList extends MusicCommand {
             }
             while (true) {
                 if (playList.getNextPage() != null) {
+                    System.out.println("in command [54]");
                     for (Track playlistTrack : playList.getTracks()) {
                         if (sex == null) {
                             sex = playlistTrack;
@@ -59,6 +60,7 @@ public class CommandPlayPlayList extends MusicCommand {
                         size++;
                     }
                 }else {
+                    System.out.println("break");
                     break;
                 }
             }
