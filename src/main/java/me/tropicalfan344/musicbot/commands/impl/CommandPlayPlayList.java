@@ -49,13 +49,17 @@ public class CommandPlayPlayList extends MusicCommand {
                 musicManager.addWithoutRefresh(playlistTrack);
                 size++;
             }
-            if (playList.getNextPage() != null) {
-                for (Track playlistTrack : playList.getTracks()) {
-                    if (sex == null) {
-                        sex = playlistTrack;
+            while (true) {
+                if (playList.getNextPage() != null) {
+                    for (Track playlistTrack : playList.getTracks()) {
+                        if (sex == null) {
+                            sex = playlistTrack;
+                        }
+                        musicManager.addWithoutRefresh(playlistTrack);
+                        size++;
                     }
-                    musicManager.addWithoutRefresh(playlistTrack);
-                    size++;
+                }else {
+                    break;
                 }
             }
 

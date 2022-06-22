@@ -136,6 +136,7 @@ public class YouTubePlayList extends PlayList {
                 if (playlistVideoRenderer == null) {
                     String token = content.getAsJsonObject().getAsJsonObject("continuationItemRenderer").getAsJsonObject("continuationEndpoint").getAsJsonObject("continuationCommand").get("token").getAsString();
                     if (token != null) {
+                        System.out.println(token);
                         continuation = token;
                     }
                     continue;
@@ -147,7 +148,6 @@ public class YouTubePlayList extends PlayList {
                 int length = Integer.parseInt(playlistVideoRenderer.get("lengthSeconds").getAsString());
                 track.add(new YouTubeTrack(title, artist, thumbnail, videoId, length));
             }
-
             return this;
         }
         return null;
