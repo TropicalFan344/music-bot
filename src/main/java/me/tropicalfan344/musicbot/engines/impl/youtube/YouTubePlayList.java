@@ -134,6 +134,7 @@ public class YouTubePlayList extends PlayList {
             for (JsonElement content : contents) {
                 JsonObject playlistVideoRenderer = content.getAsJsonObject().getAsJsonObject("playlistVideoRenderer");
                 if (playlistVideoRenderer == null) {
+                    continuation = content.getAsJsonObject().getAsJsonObject("continuationItemRenderer").getAsJsonObject("continuationEndpoint").getAsJsonObject("continuationCommand").get("token").getAsString();
                     continue;
                 }
                 String title = playlistVideoRenderer.getAsJsonObject("title").getAsJsonArray("runs").get(0).getAsJsonObject().get("text").getAsString();
@@ -143,6 +144,7 @@ public class YouTubePlayList extends PlayList {
                 int length = Integer.parseInt(playlistVideoRenderer.get("lengthSeconds").getAsString());
                 track.add(new YouTubeTrack(title, artist, thumbnail, videoId, length));
             }
+
             return this;
         }
         return null;
