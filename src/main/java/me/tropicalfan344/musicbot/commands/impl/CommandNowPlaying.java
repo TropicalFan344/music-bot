@@ -14,6 +14,9 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommandNowPlaying extends MusicCommand {
     public CommandNowPlaying() {
         super("nowplaying", "Show the song that's now being played.");
@@ -55,11 +58,16 @@ public class CommandNowPlaying extends MusicCommand {
                 .setColor(SimpleEmbedGenerator.SUCCESS)
                 .build();
         ReplyCallbackAction reply = event.getInteraction().reply(new MessageBuilder(builder).build());
+        List<Button> buttons = new ArrayList<>();
         if (musicManager.isPaused()) {
-            reply.addActionRow(Button.primary("status", "▶"));
+            buttons.add(Button.primary("status", "▶️"));
         }else {
-            reply.addActionRow(Button.primary("status", "⏸"));
+            buttons.add(Button.primary("status", "⏸"));
         }
+        buttons.add(Button.primary("skip", "►►"));
+        buttons.add(Button.primary("loopMode", musicManager.getLoopMode().getEmoji()));
+        buttons.add(Button.primary("shuffle", "\uD83D\uDD00"));
+        reply.addActionRow(buttons);
         reply.queue();
     }
 

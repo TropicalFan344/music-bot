@@ -2,6 +2,7 @@ package me.tropicalfan344.musicbot.commands.impl;
 
 import me.tropicalfan344.musicbot.GuildMusicManager;
 import me.tropicalfan344.musicbot.commands.CommandException;
+import me.tropicalfan344.musicbot.commands.CommandsManager;
 import me.tropicalfan344.musicbot.engines.Track;
 import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -26,19 +27,38 @@ public class NowPlayingButtonListener extends ListenerAdapter {
     }
 
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+        GuildMusicManager musicManager = GuildMusicManager.getMusicManager(command.musicBot, event.getGuild());
         if (event.getButton().getId().equals("status")) {
-            GuildMusicManager musicManager = GuildMusicManager.getMusicManager(command.musicBot, event.getGuild());
             if (musicManager.isPaused()) {
                 musicManager.resume();
-                reply(musicManager, event, musicManager.isPaused());
+                reply(musicManager, event, "▶️ Resumed");
             }else {
                 musicManager.pause();
-                reply(musicManager, event, musicManager.isPaused());
+                reply(musicManager, event, "⏸ Paused");
             }
+        }else if (event.getButton().getId().equals("loopMode")) {
+            switch (musicManager.getLoopMode().getName()) {
+                case "Off":
+                    musicManager.setLoopMode(GuildMusicManager.LoopMode.SINGLE);
+                    break;
+                case "Single":
+                    musicManager.setLoopMode(GuildMusicManager.LoopMode.ALL);
+                    break;
+                case "All":
+                    musicManager.setLoopMode(GuildMusicManager.LoopMode.OFF);
+                    break;
+            }
+            reply(musicManager, event, "Changed loop mode to : " + musicManager.getLoopMode().getEmoji() + musicManager.getLoopMode().getName());
+        }else if (event.getButton().getId().equals("skip")) {
+            musicManager.skip();
+            reply(musicManager, event, "►► Skipped");
+        }else if (event.getButton().getId().equals("shuffle")) {
+            musicManager.shuffle();
+            reply(musicManager, event, "\uD83D\uDD00 Shuffled");
         }
     }
 
-    private void reply(GuildMusicManager musicManager, ButtonInteractionEvent event, boolean isPause) {
+    private void reply(GuildMusicManager musicManager, ButtonInteractionEvent event, String extraDes) {
         if (musicManager.getSendHandler() == null) {
             throw new CommandException("The bot is not playing any music at the moment");
         }
@@ -56,8 +76,8 @@ public class NowPlayingButtonListener extends ListenerAdapter {
         int before = (int) (progress * 20);
         int after = 20 - before;
         description += repeat("─", before) + "◉" + repeat("─", after);
-
         description += "\n" + musicManager.getLoopMode().getEmoji() + "   ◄◄  " + (musicManager.getSendHandler().isPaused()?":arrow_forward:":":pause_button:") + "  ►►  " + time;
+        description += "\n" + extraDes;
 
         Track targetTrack = musicManager.getQueue().get(0);
         MessageEmbed builder = new EmbedBuilder()
@@ -69,11 +89,14 @@ public class NowPlayingButtonListener extends ListenerAdapter {
                 .build();
         MessageEditCallbackAction reply = event.editMessage(new MessageBuilder(builder).build());
         List<Button> buttons = new ArrayList<>();
-        if (isPause) {
-            buttons.add(Button.primary("status", "▶"));
+        if (musicManager.isPaused()) {
+            buttons.add(Button.primary("status", "▶️"));
         }else {
             buttons.add(Button.primary("status", "⏸"));
         }
+        buttons.add(Button.primary("skip", "►►"));
+        buttons.add(Button.primary("loopMode", musicManager.getLoopMode().getEmoji()));
+        buttons.add(Button.primary("shuffle", "\uD83D\uDD00"));
         reply.setActionRow(buttons);
         reply.queue();
     }
