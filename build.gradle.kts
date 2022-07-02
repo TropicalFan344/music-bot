@@ -26,7 +26,7 @@ dependencies {
     implementation("net.dv8tion:JDA:5.0.0-alpha.12")
     implementation("ws.schild:jave-all-deps:3.3.1")
     implementation("com.sedmelluq:lavaplayer:1.3.78")
-    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("com.google.code.gson:gson:2.9.0")
     implementation("org.reflections:reflections:0.10.2")
     implementation("com.github.psambit9791:jdsp:1.0.0")
