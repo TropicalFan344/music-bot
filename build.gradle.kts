@@ -49,7 +49,7 @@ allprojects {
         if (debugFacket) {
             implementation("me.fan87:facket:1.0.0-SNAPSHOT")
         } else {
-            implementation("com.github.RektSky:Facket:2.1.1")
+            implementation("com.github.rektsky:facket:2.1.1")
         }
     }
 }

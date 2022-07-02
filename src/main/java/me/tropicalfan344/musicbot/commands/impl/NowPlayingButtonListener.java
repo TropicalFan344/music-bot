@@ -1,31 +1,44 @@
 package me.tropicalfan344.musicbot.commands.impl;
 
 import me.tropicalfan344.musicbot.GuildMusicManager;
-import me.tropicalfan344.musicbot.TrackSendHandler;
 import me.tropicalfan344.musicbot.commands.CommandException;
-import me.tropicalfan344.musicbot.commands.MusicCommand;
 import me.tropicalfan344.musicbot.engines.Track;
 import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.requests.restaction.interactions.MessageEditCallbackAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
+import org.jetbrains.annotations.NotNull;
 
-public class CommandNowPlaying extends MusicCommand {
-    public CommandNowPlaying() {
-        super("nowplaying", "Show the song that's now being played.");
+import java.util.ArrayList;
+import java.util.List;
+
+public class NowPlayingButtonListener extends ListenerAdapter {
+
+    private CommandNowPlaying command;
+
+    public NowPlayingButtonListener(CommandNowPlaying command) {
+        this.command = command;
     }
 
-    public void init() {
-        musicBot.getJda().addEventListener(new NowPlayingButtonListener(this));
+    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+        if (event.getButton().getId().equals("status")) {
+            GuildMusicManager musicManager = GuildMusicManager.getMusicManager(command.musicBot, event.getGuild());
+            if (musicManager.isPaused()) {
+                musicManager.resume();
+                reply(musicManager, event, musicManager.isPaused());
+            }else {
+                musicManager.pause();
+                reply(musicManager, event, musicManager.isPaused());
+            }
+        }
     }
 
-    @Override
-    public void onExecute(SlashCommandInteractionEvent event) {
-        GuildMusicManager musicManager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
+    private void reply(GuildMusicManager musicManager, ButtonInteractionEvent event, boolean isPause) {
         if (musicManager.getSendHandler() == null) {
             throw new CommandException("The bot is not playing any music at the moment");
         }
@@ -54,15 +67,16 @@ public class CommandNowPlaying extends MusicCommand {
                 .setThumbnail(targetTrack.getThumbnail())
                 .setColor(SimpleEmbedGenerator.SUCCESS)
                 .build();
-        ReplyCallbackAction reply = event.getInteraction().reply(new MessageBuilder(builder).build());
-        if (musicManager.isPaused()) {
-            reply.addActionRow(Button.primary("status", "▶"));
+        MessageEditCallbackAction reply = event.editMessage(new MessageBuilder(builder).build());
+        List<Button> buttons = new ArrayList<>();
+        if (isPause) {
+            buttons.add(Button.primary("status", "▶"));
         }else {
-            reply.addActionRow(Button.primary("status", "⏸"));
+            buttons.add(Button.primary("status", "⏸"));
         }
+        reply.setActionRow(buttons);
         reply.queue();
     }
-
 
     private static String repeat(String input, int amount) {
         StringBuilder output = new StringBuilder();
@@ -73,4 +87,3 @@ public class CommandNowPlaying extends MusicCommand {
     }
 
 }
-
