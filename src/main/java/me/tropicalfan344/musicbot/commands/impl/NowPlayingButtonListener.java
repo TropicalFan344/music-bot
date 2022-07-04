@@ -61,44 +61,45 @@ public class NowPlayingButtonListener extends ListenerAdapter {
     private void reply(GuildMusicManager musicManager, ButtonInteractionEvent event, String extraDes) {
         if (musicManager.getSendHandler() == null) {
             throw new CommandException("The bot is not playing any music at the moment");
-        }
-        int totalLength = musicManager.getQueue().get(0).getLength();
-        //unit:sec
-        int currentTime = (int) musicManager.getSendHandler().getTime() / 1000;
-        //unit:ms
-        int currentMinute = currentTime / 60;
-        int currentSecond = currentTime % 60;
-        int totalMinute = totalLength / 60;
-        int totalSecond = totalLength % 60;
-        String time = String.format("%02d:%02d / %02d:%02d", currentMinute, currentSecond, totalMinute, totalSecond);
-        float progress = currentTime*1.0f/totalLength;
-        String description = "";
-        int before = (int) (progress * 20);
-        int after = 20 - before;
-        description += repeat("─", before) + "◉" + repeat("─", after);
-        description += "\n" + musicManager.getLoopMode().getEmoji() + "   ◄◄  " + (musicManager.getSendHandler().isPaused()?":arrow_forward:":":pause_button:") + "  ►►  " + time;
-        description += "\n" + extraDes;
-
-        Track targetTrack = musicManager.getQueue().get(0);
-        MessageEmbed builder = new EmbedBuilder()
-                .setTitle(targetTrack.getTitle(), targetTrack.getUrl())
-                .setAuthor("ɴᴏᴡ ᴘʟᴀʏɪɴɢ:")
-                .setDescription(description)
-                .setThumbnail(targetTrack.getThumbnail())
-                .setColor(SimpleEmbedGenerator.SUCCESS)
-                .build();
-        MessageEditCallbackAction reply = event.editMessage(new MessageBuilder(builder).build());
-        List<Button> buttons = new ArrayList<>();
-        if (musicManager.isPaused()) {
-            buttons.add(Button.primary("status", "▶️"));
         }else {
-            buttons.add(Button.primary("status", "⏸"));
+            int totalLength = musicManager.getQueue().get(0).getLength();
+            //unit:sec
+            int currentTime = (int) musicManager.getSendHandler().getTime() / 1000;
+            //unit:ms
+            int currentMinute = currentTime / 60;
+            int currentSecond = currentTime % 60;
+            int totalMinute = totalLength / 60;
+            int totalSecond = totalLength % 60;
+            String time = String.format("%02d:%02d / %02d:%02d", currentMinute, currentSecond, totalMinute, totalSecond);
+            float progress = currentTime*1.0f/totalLength;
+            String description = "";
+            int before = (int) (progress * 20);
+            int after = 20 - before;
+            description += repeat("─", before) + "◉" + repeat("─", after);
+            description += "\n" + musicManager.getLoopMode().getEmoji() + "   ◄◄  " + (musicManager.getSendHandler().isPaused()?":arrow_forward:":":pause_button:") + "  ►►  " + time;
+            description += "\n" + extraDes;
+
+            Track targetTrack = musicManager.getQueue().get(0);
+            MessageEmbed builder = new EmbedBuilder()
+                    .setTitle(targetTrack.getTitle(), targetTrack.getUrl())
+                    .setAuthor("ɴᴏᴡ ᴘʟᴀʏɪɴɢ:")
+                    .setDescription(description)
+                    .setThumbnail(targetTrack.getThumbnail())
+                    .setColor(SimpleEmbedGenerator.SUCCESS)
+                    .build();
+            MessageEditCallbackAction reply = event.editMessage(new MessageBuilder(builder).build());
+            List<Button> buttons = new ArrayList<>();
+            if (musicManager.isPaused()) {
+                buttons.add(Button.primary("status", "▶️"));
+            }else {
+                buttons.add(Button.primary("status", "⏸"));
+            }
+            buttons.add(Button.primary("skip", "►►"));
+            buttons.add(Button.primary("loopMode", musicManager.getLoopMode().getEmoji()));
+            buttons.add(Button.primary("shuffle", "\uD83D\uDD00"));
+            reply.setActionRow(buttons);
+            reply.queue();
         }
-        buttons.add(Button.primary("skip", "►►"));
-        buttons.add(Button.primary("loopMode", musicManager.getLoopMode().getEmoji()));
-        buttons.add(Button.primary("shuffle", "\uD83D\uDD00"));
-        reply.setActionRow(buttons);
-        reply.queue();
     }
 
     private static String repeat(String input, int amount) {
