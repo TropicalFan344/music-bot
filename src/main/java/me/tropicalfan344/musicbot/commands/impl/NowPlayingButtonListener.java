@@ -31,10 +31,10 @@ public class NowPlayingButtonListener extends ListenerAdapter {
         if (event.getButton().getId().equals("status")) {
             if (musicManager.isPaused()) {
                 musicManager.resume();
-                reply(musicManager, event, "▶️ Resumed");
+                reply(musicManager, event, "\n▶️ Resumed");
             }else {
                 musicManager.pause();
-                reply(musicManager, event, "⏸ Paused");
+                reply(musicManager, event, "\n⏸ Paused");
             }
         }else if (event.getButton().getId().equals("loopMode")) {
             switch (musicManager.getLoopMode().getName()) {
@@ -48,13 +48,15 @@ public class NowPlayingButtonListener extends ListenerAdapter {
                     musicManager.setLoopMode(GuildMusicManager.LoopMode.OFF);
                     break;
             }
-            reply(musicManager, event, "Changed loop mode to : " + musicManager.getLoopMode().getEmoji() + musicManager.getLoopMode().getName());
+            reply(musicManager, event, "\nChanged loop mode to : " + musicManager.getLoopMode().getEmoji() + musicManager.getLoopMode().getName());
         }else if (event.getButton().getId().equals("skip")) {
             musicManager.skip();
-            reply(musicManager, event, "►► Skipped");
+            reply(musicManager, event, "\n►► Skipped");
         }else if (event.getButton().getId().equals("shuffle")) {
             musicManager.shuffle();
-            reply(musicManager, event, "\uD83D\uDD00 Shuffled");
+            reply(musicManager, event, "\n\uD83D\uDD00 Shuffled");
+        }else if (event.getButton().getId().equals("refresh")) {
+            reply(musicManager, event, "");
         }
     }
 
@@ -77,7 +79,7 @@ public class NowPlayingButtonListener extends ListenerAdapter {
             int after = 20 - before;
             description += repeat("─", before) + "◉" + repeat("─", after);
             description += "\n" + musicManager.getLoopMode().getEmoji() + "   ◄◄  " + (musicManager.getSendHandler().isPaused()?":arrow_forward:":":pause_button:") + "  ►►  " + time;
-            description += "\n" + extraDes;
+            description += extraDes;
 
             Track targetTrack = musicManager.getQueue().get(0);
             MessageEmbed builder = new EmbedBuilder()
