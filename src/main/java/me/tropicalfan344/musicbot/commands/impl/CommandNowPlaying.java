@@ -67,7 +67,7 @@ public class CommandNowPlaying extends MusicCommand {
             buttons.add(Button.primary("skip", "►►"));
             buttons.add(Button.primary("loopMode", musicManager.getLoopMode().getEmoji()));
             buttons.add(Button.primary("shuffle", "\uD83D\uDD00"));
-            buttons.add(Button.primary("refresh", "⟳"));
+            buttons.add(Button.primary("refresh", "\uD83D\uDDD8"));
             reply.addActionRow(buttons);
             reply.queue();
         }
