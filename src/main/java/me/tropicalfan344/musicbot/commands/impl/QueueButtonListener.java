@@ -36,7 +36,7 @@ public class QueueButtonListener extends ListenerAdapter {
                 builder.setTitle("Songs in Queue");
                 String out = "";
                 int requestedPage = page;
-                int pageAmount = 10;
+                int pageAmount = 15;
                 int totalPages = (int) Math.ceil(manager.getQueue().size() * 1.0 / pageAmount);
                 requestedPage = Math.min(Math.max(requestedPage, 1), totalPages);
                 int startIndex = (requestedPage - 1) * pageAmount; // Inclusive
