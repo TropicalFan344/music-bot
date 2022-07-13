@@ -7,6 +7,7 @@ import me.tropicalfan344.musicbot.effects.AudioEffect;
 import me.tropicalfan344.musicbot.effects.AudioEffectsManager;
 import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
 import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
@@ -52,12 +53,10 @@ public class CommandsManager {
         }
 
 
-        String[] guilds = new String[] {
-                "979552134850834492",
-                "854997016996216862",
-                "988871600701075557",
-                "995656592433352725"
-        };
+        List<String> guilds = new ArrayList<>();
+        for (Guild guild : musicBot.getJda().getGuilds()) {
+            guilds.add(guild.getId());
+        }
         for (String guild : guilds) {
             if (musicBot.getJda().getGuildById(guild) == null) {
                 continue;
