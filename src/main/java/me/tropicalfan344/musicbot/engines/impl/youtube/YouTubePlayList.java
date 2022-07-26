@@ -151,7 +151,6 @@ public class YouTubePlayList extends PlayList {
                     continue;
                 }
                 length = Integer.parseInt(playlistVideoRenderer.get("lengthSeconds").getAsString());
-                System.out.println(title + " / " + length);
                 tracks.add(new YouTubeTrack(title, artist, thumbnail, videoId, length));
             }
             continuation = null;
