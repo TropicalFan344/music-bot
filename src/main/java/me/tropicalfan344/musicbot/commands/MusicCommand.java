@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 
+import java.io.IOException;
+
 public abstract class MusicCommand {
 
     public CommandData getCommandData() {
@@ -34,6 +36,6 @@ public abstract class MusicCommand {
 
     }
 
-    public abstract void onExecute(SlashCommandInteractionEvent event);
+    public abstract void onExecute(SlashCommandInteractionEvent event) throws IOException;
 
 }
