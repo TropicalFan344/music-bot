@@ -38,7 +38,7 @@ public class MusicBot {
         this.configManager = new ConfigManager();
         this.jda = JDABuilder
                 .createDefault(configManager.getConfig().token)
-                .setActivity(Activity.playing("Gayshin Impact"))
+                .setActivity(Activity.playing("TOWA"))
                 .build();
 
 
