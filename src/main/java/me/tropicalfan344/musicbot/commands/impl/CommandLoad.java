@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -22,15 +23,20 @@ public class CommandLoad extends MusicCommand {
     }
 
     @Override
-    public void onExecute(SlashCommandInteractionEvent event) throws IOException {
+    public void onExecute(SlashCommandInteractionEvent event){
         event.deferReply().queue();
         File list = new File("saves/" + event.getGuild().getId() + ".json");
         Gson gson = new Gson();
         String name = event.getOption("name").getAsString();
         GuildMusicManager manager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
-        if (!list.exists()) new CommandException("There is no saved list on the server. Use /save to save the list");
-        JsonObject jsonList = gson.fromJson(new FileReader("saves/" + event.getGuild().getId() + ".json"), JsonObject.class);
-        if (!jsonList.has(name)) new CommandException("List not found, check your cases or create a new list by using /save");
+        if (!list.exists()) throw new CommandException("There is no saved list on the server. Use /save to save the list");
+        JsonObject jsonList = null;
+        try {
+            jsonList = gson.fromJson(new FileReader("saves/" + event.getGuild().getId() + ".json"), JsonObject.class);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        if (!jsonList.has(name)) throw new CommandException("List not found, check your cases or create a new list by using /save");
         for (JsonElement song : jsonList.getAsJsonArray(name)) {
             String title = song.getAsJsonObject().get("title").getAsString();
             String artist = song.getAsJsonObject().get("artist").getAsString();

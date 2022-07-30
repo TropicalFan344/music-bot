@@ -36,6 +36,6 @@ public abstract class MusicCommand {
 
     }
 
-    public abstract void onExecute(SlashCommandInteractionEvent event) throws IOException;
+    public abstract void onExecute(SlashCommandInteractionEvent event);
 
 }
