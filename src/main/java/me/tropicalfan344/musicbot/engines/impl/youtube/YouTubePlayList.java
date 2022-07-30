@@ -117,7 +117,7 @@ public class YouTubePlayList extends PlayList {
     @SneakyThrows
     public @Nullable PlayList getNextPage() {
         tracks.clear();
-        System.out.println(continuation + " / " + (continuation != null));
+//        System.out.println(continuation + " / " + (continuation != null));
         if (continuation != null) {
             JsonObject object = new JsonObject();
             object.addProperty("continuation", continuation);

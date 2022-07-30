@@ -47,7 +47,7 @@ public class CommandQueue extends MusicCommand {
     public void reply(int page, IReplyCallback interaction, Guild guild) {
         GuildMusicManager manager = GuildMusicManager.getMusicManager(musicBot, guild);
         if (manager.getQueue().size() == 0) {
-            interaction.reply("There is nothing in queue.").queue();
+            interaction.replyEmbeds(SimpleEmbedGenerator.generateErrorEmbed("There is nothing in queue.")).queue();
         }else {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setTitle("Songs in Queue");
