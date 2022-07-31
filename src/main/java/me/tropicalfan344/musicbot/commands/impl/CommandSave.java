@@ -57,6 +57,6 @@ public class CommandSave extends MusicCommand {
         outputFile = new FileOutputStream(list);
         outputFile.write(output.getBytes(StandardCharsets.UTF_8));
         outputFile.close();
-        event.getHook().editOriginalEmbeds(SimpleEmbedGenerator.generateSuccessfulEmbed("Successfully saved queue")).queue();
+        event.getHook().editOriginalEmbeds(SimpleEmbedGenerator.generateSuccessfulEmbed("Queue saved (" + manager.getQueue().size() + " songs)")).queue();
     }
 }

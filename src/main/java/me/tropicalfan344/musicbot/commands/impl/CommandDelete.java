@@ -1,25 +1,25 @@
 package me.tropicalfan344.musicbot.commands.impl;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import me.tropicalfan344.musicbot.GuildMusicManager;
 import me.tropicalfan344.musicbot.commands.CommandException;
 import me.tropicalfan344.musicbot.commands.MusicCommand;
-import me.tropicalfan344.musicbot.engines.impl.youtube.YouTubeTrack;
 import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
-public class CommandLoad extends MusicCommand {
-    public CommandLoad() {
-        super("load", "Load saved list", new OptionData(OptionType.STRING, "name", "name of list", true));
+public class CommandDelete extends MusicCommand {
+    public CommandDelete() {
+        super("delete", "Delete saved list", new OptionData(OptionType.STRING, "name", "name of list", true));
     }
 
     @Override
@@ -27,8 +27,8 @@ public class CommandLoad extends MusicCommand {
         event.deferReply().queue();
         File list = new File("saves/" + event.getGuild().getId() + ".json");
         Gson gson = new Gson();
-        String name = event.getOption("name").getAsString();
         GuildMusicManager manager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
+        String name = event.getOption("name").getAsString();
 
         if (!list.exists()) throw new CommandException("There is no saved list on this server. Use /save to save the list");
 
@@ -36,16 +36,14 @@ public class CommandLoad extends MusicCommand {
         JsonObject jsonList = gson.fromJson(reader, JsonObject.class);
         reader.close();
 
-        if (!jsonList.has(name)) throw new CommandException("List not found, check your cases or create a new list by using /save");
+        if (!jsonList.has(name)) throw new CommandException("List not found. Please check your cases");
 
-        for (JsonElement song : jsonList.getAsJsonArray(name)) {
-            String title = song.getAsJsonObject().get("title").getAsString();
-            String artist = song.getAsJsonObject().get("artist").getAsString();
-            String thumbnail = song.getAsJsonObject().get("thumbnail").getAsString();
-            String videoId = song.getAsJsonObject().get("videoId").getAsString();
-            int length = song.getAsJsonObject().get("length").getAsInt();
-            manager.add(new YouTubeTrack(title, artist, thumbnail, videoId, length));
-        }
-        event.getHook().editOriginalEmbeds(SimpleEmbedGenerator.generateSuccessfulEmbed("List **" + name + "** loaded! (" + jsonList.getAsJsonArray(name).size() + " songs)")).queue();
+        jsonList.remove(name);
+        String output = gson.toJson(jsonList);
+        FileOutputStream outputFile = null;
+        outputFile = new FileOutputStream(list);
+        outputFile.write(output.getBytes(StandardCharsets.UTF_8));
+        outputFile.close();
+        event.getHook().editOriginalEmbeds(SimpleEmbedGenerator.generateSuccessfulEmbed("List deleted")).queue();
     }
 }
