@@ -1,7 +1,6 @@
 package me.tropicalfan344.musicbot.commands.impl;
 
 import me.tropicalfan344.musicbot.GuildMusicManager;
-import me.tropicalfan344.musicbot.TrackSendHandler;
 import me.tropicalfan344.musicbot.commands.CommandException;
 import me.tropicalfan344.musicbot.commands.MusicCommand;
 import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
@@ -10,9 +9,9 @@ import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-public class CommandLeave extends MusicCommand {
-    public CommandLeave() {
-        super("leave", "Disconnect from the channel that the bot is in");
+public class CommandDisconnect extends MusicCommand {
+    public CommandDisconnect() {
+        super("disconnect", "Disconnect from the channel that the bot is in");
     }
 
     @Override

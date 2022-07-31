@@ -23,20 +23,21 @@ public class CommandLoad extends MusicCommand {
     }
 
     @Override
-    public void onExecute(SlashCommandInteractionEvent event){
+    public void onExecute(SlashCommandInteractionEvent event) throws IOException {
         event.deferReply().queue();
         File list = new File("saves/" + event.getGuild().getId() + ".json");
         Gson gson = new Gson();
         String name = event.getOption("name").getAsString();
         GuildMusicManager manager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
-        if (!list.exists()) throw new CommandException("There is no saved list on the server. Use /save to save the list");
-        JsonObject jsonList = null;
-        try {
-            jsonList = gson.fromJson(new FileReader("saves/" + event.getGuild().getId() + ".json"), JsonObject.class);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+
+        if (!list.exists()) throw new CommandException("There is no saved list on this server. Use /save to save the list");
+
+        FileReader reader = new FileReader("saves/" + event.getGuild().getId() + ".json");
+        JsonObject jsonList = gson.fromJson(reader, JsonObject.class);
+        reader.close();
+
         if (!jsonList.has(name)) throw new CommandException("List not found, check your cases or create a new list by using /save");
+
         for (JsonElement song : jsonList.getAsJsonArray(name)) {
             String title = song.getAsJsonObject().get("title").getAsString();
             String artist = song.getAsJsonObject().get("artist").getAsString();

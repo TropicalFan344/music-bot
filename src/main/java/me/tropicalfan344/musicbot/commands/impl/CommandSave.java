@@ -16,11 +16,11 @@ import java.nio.charset.StandardCharsets;
 
 public class CommandSave extends MusicCommand {
     public CommandSave() {
-        super("save", "Save all songs in queue", new OptionData(OptionType.STRING, "name", "name of list", true));
+        super("save", "Save all songs in queue", new OptionData(OptionType.STRING, "name", "name of list", true), new OptionData(OptionType.BOOLEAN, "replace", "replace target list or not", false));
     }
 
     @Override
-    public void onExecute(SlashCommandInteractionEvent event){
+    public void onExecute(SlashCommandInteractionEvent event) throws IOException {
         event.getInteraction().deferReply().queue();
         File list = new File("saves/" + event.getGuild().getId() + ".json");
         GuildMusicManager manager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
@@ -30,27 +30,17 @@ public class CommandSave extends MusicCommand {
             throw new CommandException("There is nothing in queue");
         }
         if (!list.exists()) {
-            try {
-                list.createNewFile();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            list.createNewFile();
             jsonList = new JsonObject();
         }else {
             FileReader reader = null;
-            try {
-                reader = new FileReader("saves/" + event.getGuild().getId() + ".json");
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            reader = new FileReader("saves/" + event.getGuild().getId() + ".json");
             jsonList = gson.fromJson(reader, JsonObject.class);
-            try {
-                reader.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            reader.close();
         }
-        if(jsonList.has(event.getOption("name").getAsString())) throw new CommandException("List already exists");
+        if (jsonList.has(event.getOption("name").getAsString()) && !    event.getOption("replace").getAsBoolean()) {
+            throw new CommandException("List already exists");
+        }
         JsonArray songList = new JsonArray();
         for (Track track : manager.getQueue()) {
             JsonObject song = new JsonObject();
@@ -64,21 +54,9 @@ public class CommandSave extends MusicCommand {
         jsonList.add(event.getOption("name").getAsString(), songList);
         String output = gson.toJson(jsonList);
         FileOutputStream outputFile = null;
-        try {
-            outputFile = new FileOutputStream(list);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            outputFile.write(output.getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            outputFile.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        outputFile = new FileOutputStream(list);
+        outputFile.write(output.getBytes(StandardCharsets.UTF_8));
+        outputFile.close();
         event.getHook().editOriginalEmbeds(SimpleEmbedGenerator.generateSuccessfulEmbed("Successfully saved queue")).queue();
     }
 }
