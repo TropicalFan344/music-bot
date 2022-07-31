@@ -34,7 +34,7 @@ public class CommandSaveList extends MusicCommand {
         String output = "";
         for (int i = 0; i < jsonList.keySet().size();) {
             for (String s : jsonList.keySet()) {
-                output += i+1 + ". " + s + "(" + jsonList.get(s).getAsJsonArray().size() + "(\n";
+                output += i+1 + ". " + s + " (" + jsonList.get(s).getAsJsonArray().size() + ")\n";
                 i++;
             }
         }
