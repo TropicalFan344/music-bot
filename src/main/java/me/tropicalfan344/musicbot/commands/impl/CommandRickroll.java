@@ -19,6 +19,7 @@ public class CommandRickroll extends MusicCommand {
         event.deferReply().queue();
         GuildMusicManager manager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
         manager.add(YouTubeTrack.getVideoById("dQw4w9WgXcQ"));
-        event.getHook().editOriginalEmbeds(SimpleEmbedGenerator.generateWarningEmbed("Rick roll coming!!!!!!"));
+        manager.joinVoiceChannel(event.getMember().getVoiceState().getChannel());
+        event.getHook().editOriginalEmbeds(SimpleEmbedGenerator.generateWarningEmbed("Rick roll coming!!!!!!")).queue();
     }
 }
