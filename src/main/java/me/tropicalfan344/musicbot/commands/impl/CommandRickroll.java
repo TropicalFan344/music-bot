@@ -38,7 +38,7 @@ public class CommandRickroll extends MusicCommand {
         }
         event.getHook().editOriginalEmbeds(new EmbedBuilder()
                         .setColor(new Color(0xff4747))
-                        .setImage("https://tenor.com/view/rick-roll-gif-23595798")
+                        .setImage("https://c.tenor.com/_4YgA77ExHEAAAAd/rick-roll.gif")
                         .setTitle("Rick roll coming!!!!!")
                 .build()).queue();
     }
