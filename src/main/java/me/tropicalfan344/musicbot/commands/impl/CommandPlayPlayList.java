@@ -5,7 +5,6 @@ import me.tropicalfan344.musicbot.commands.CommandException;
 import me.tropicalfan344.musicbot.commands.MusicCommand;
 import me.tropicalfan344.musicbot.engines.Track;
 import me.tropicalfan344.musicbot.engines.impl.youtube.YouTubePlayList;
-import me.tropicalfan344.musicbot.engines.impl.youtube.YouTubeTrack;
 import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;

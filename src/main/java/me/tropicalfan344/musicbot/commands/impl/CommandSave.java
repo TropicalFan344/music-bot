@@ -38,7 +38,7 @@ public class CommandSave extends MusicCommand {
             jsonList = gson.fromJson(reader, JsonObject.class);
             reader.close();
         }
-        if (jsonList.has(event.getOption("name").getAsString()) && !    event.getOption("replace").getAsBoolean()) {
+        if (jsonList.has(event.getOption("name").getAsString()) && !event.getOption("replace").getAsBoolean()) {
             throw new CommandException("List already exists");
         }
         JsonArray songList = new JsonArray();
