@@ -22,7 +22,7 @@ public class CommandSkip extends MusicCommand {
         }
         int amount = 1;
         if (event.getOption("index") != null) {
-            amount = event.getOption("index").getAsInt();
+            amount = event.getOption("index").getAsInt() - 1;
         }
         Track skippedTrack = musicManager.getQueue().get(0);
         int skip = musicManager.skip(amount);
