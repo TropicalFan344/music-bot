@@ -28,10 +28,14 @@ public class CommandOpenRadio extends MusicCommand {
         for (Track track : tracks.subList(1, tracks.size())) {
             musicManager.add(track);
         }
+        String des = "";
+        int index = 1;
+        for (Track track : tracks) {
+            des += index + ". " + track.getEmbedDisplay() + "\n";
+        }
         event.getInteraction().replyEmbeds(new EmbedBuilder()
                 .setTitle("Added " + (tracks.size()-1) +  " song(s) to queue")
-                .setDescription(nowPlaying.getEmbedDisplay())
-                .setImage(nowPlaying.getThumbnail())
+                .setDescription(des)
                 .setColor(SimpleEmbedGenerator.SUCCESS)
                 .build()).queue();
     }
