@@ -159,6 +159,7 @@ public class GuildMusicManager {
      * @param skip If it's skipping, and it's in "repeat one" mode, it will still skip it
      */
     private boolean nextSong(boolean skip) {
+        lastTrack = getQueue().get(getQueue().size()-1);
         if (queue.isEmpty()) {
             return false;
         }
@@ -238,9 +239,11 @@ public class GuildMusicManager {
                 getGuildAudioManager().setSendingHandler(sendHandler);
             }
         }
-        if(queue.size() != 0 && isAutoPlay) {
-            lastTrack = queue.get(queue.size()-1);
+        if(queue.size() == 0 && isAutoPlay) {
             lastTrackOP.addAll(lastTrack.openRadio());
+            lastTrackOP.remove(0);
+            queue.addAll(lastTrackOP);
+            refreshQueue(false);
         }else {
             lastTrack = null;
         }
@@ -248,6 +251,7 @@ public class GuildMusicManager {
 
     public void remove(@Range(from = 0, to = Long.MAX_VALUE) int index) {
         queue.remove(Math.min(index, queue.size() - 1));
+        lastTrack = getQueue().get(getQueue().size()-1);
         refreshQueue(false);
     }
 
@@ -255,6 +259,7 @@ public class GuildMusicManager {
         queue.clear();
         refreshQueue(false);
         isAutoPlay = false;
+        lastTrack = null;
     }
 
     public void move(int from, int to) {
@@ -269,11 +274,13 @@ public class GuildMusicManager {
         }
         Track track = queue.remove(from);
         queue.add(to, track);
+        lastTrack = getQueue().get(getQueue().size()-1);
         refreshQueue(false);
     }
 
     public void insert(@Range(from = 0, to = Long.MAX_VALUE) int index, Track track) {
         queue.add(Math.min(index, Math.max(0, queue.size() - 1)), track);
+        lastTrack = getQueue().get(getQueue().size()-1);
         refreshQueue(false);
     }
 
@@ -348,10 +355,12 @@ public class GuildMusicManager {
 
     public void addWithoutRefresh(Track track) {
         queue.add(track);
+        lastTrack = getQueue().get(getQueue().size()-1);
     }
 
     public void add(Track track) {
         queue.add(track);
+        lastTrack = getQueue().get(getQueue().size()-1);
         refreshQueue(false);
     }
 
@@ -362,6 +371,7 @@ public class GuildMusicManager {
         Track first = queue.remove(0);
         Collections.shuffle(queue);
         queue.add(0, first);
+        lastTrack = getQueue().get(getQueue().size()-1);
     }
 
     public List<Track> getQueue() {
