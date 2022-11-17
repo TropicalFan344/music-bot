@@ -28,7 +28,7 @@ public class CommandDisconnect extends MusicCommand {
         GuildMusicManager.getMusicManager(musicBot, event.getGuild()).disconnectFromVoiceChannel();
         AudioChannel channel = event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).getVoiceState().getChannel();
         event.getInteraction().reply(
-                new MessageBuilder(SimpleEmbedGenerator.generateSuccessfulEmbed("Successfully disconnected from " + channel.getAsMention())).build()
+                new MessageBuilder(SimpleEmbedGenerator.generateSuccessfulEmbed("Successfully disconnected from " + channel.getAsMention() + ", AutoPlay is now **Disabled**")).build()
         ).queue();
 
     }

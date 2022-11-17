@@ -15,7 +15,7 @@ public class CommandClear extends MusicCommand {
     public void onExecute(SlashCommandInteractionEvent event) {
         GuildMusicManager musicManager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
         musicManager.clearQueue();
-        event.getInteraction().replyEmbeds(SimpleEmbedGenerator.generateSuccessfulEmbed("Queue has been cleared")).queue();
+        event.getInteraction().replyEmbeds(SimpleEmbedGenerator.generateSuccessfulEmbed("Queue has been cleared, AutoPlay is now **Disabled**")).queue();
 
     }
 }

@@ -95,6 +95,12 @@ public class GuildMusicManager {
 
     private final List<Track> queue = new ArrayList<>();
 
+    @Getter private Track lastTrack = null;
+
+    @Getter private List<Track> lastTrackOP = new ArrayList<>();
+
+    @Getter @Setter private boolean isAutoPlay = false;
+
     @Getter @Setter private long downloadSpeed;
 
     @Getter private final AudioEffectsManager audioEffectsManager;
@@ -232,6 +238,12 @@ public class GuildMusicManager {
                 getGuildAudioManager().setSendingHandler(sendHandler);
             }
         }
+        if(queue.size() != 0 && isAutoPlay) {
+            lastTrack = queue.get(queue.size()-1);
+            lastTrackOP.addAll(lastTrack.openRadio());
+        }else {
+            lastTrack = null;
+        }
     }
 
     public void remove(@Range(from = 0, to = Long.MAX_VALUE) int index) {
@@ -242,6 +254,7 @@ public class GuildMusicManager {
     public void clearQueue() {
         queue.clear();
         refreshQueue(false);
+        isAutoPlay = false;
     }
 
     public void move(int from, int to) {
