@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class CommandToggleAutoPlay extends MusicCommand {
     public CommandToggleAutoPlay() {
-        super("tgautoplay", "Toddle AutoPlay");
+        super("tgautoplay", "Toggle AutoPlay");
     }
 
     @Override
