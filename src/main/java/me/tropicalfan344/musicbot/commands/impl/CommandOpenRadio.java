@@ -32,6 +32,7 @@ public class CommandOpenRadio extends MusicCommand {
         int index = 1;
         for (Track track : tracks) {
             des += index + ". " + track.getEmbedDisplay() + "\n";
+            index++;
         }
         event.getInteraction().replyEmbeds(new EmbedBuilder()
                 .setTitle("Added " + (tracks.size()-1) +  " song(s) to queue")
