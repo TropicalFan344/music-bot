@@ -29,7 +29,7 @@ public class CommandNowPlaying extends MusicCommand {
     @Override
     public void onExecute(SlashCommandInteractionEvent event) {
         GuildMusicManager musicManager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
-        if (musicManager.getSendHandler() == null) {
+        if (musicManager.getQueue().size() == 0) {
             throw new CommandException("The bot is not playing any music at the moment");
         }else {
             int totalLength = musicManager.getQueue().get(0).getLength();
