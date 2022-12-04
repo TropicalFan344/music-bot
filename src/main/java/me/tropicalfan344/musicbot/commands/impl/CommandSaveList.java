@@ -17,7 +17,7 @@ import java.util.List;
 
 public class CommandSaveList extends MusicCommand {
     public CommandSaveList() {
-        super("list-save", "Show all saves on this server");
+        super("list-saves", "Show all saves on this server");
     }
 
     @Override

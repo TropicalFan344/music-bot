@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public class CommandSave extends MusicCommand {
     public CommandSave() {
@@ -35,7 +36,15 @@ public class CommandSave extends MusicCommand {
         }else {
             FileReader reader = null;
             reader = new FileReader("saves/" + event.getGuild().getId() + ".json");
-            jsonList = gson.fromJson(reader, JsonObject.class);
+            try{
+                jsonList = gson.fromJson(reader, JsonObject.class);
+            }catch (JsonSyntaxException e){
+                reader.close();
+                list.delete();
+                list.createNewFile();
+                reader = new FileReader("saves/" + event.getGuild().getId() + ".json");
+                jsonList = gson.fromJson(reader, JsonObject.class);
+            }
             reader.close();
         }
         if (jsonList.has(event.getOption("name").getAsString()) && !event.getOption("replace").getAsBoolean()) {
