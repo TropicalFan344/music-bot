@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public class CommandHEYYEYAAEYAAAEYAEYAA extends MusicCommand {
     public CommandHEYYEYAAEYAAAEYAEYAA() {
-        super("HEYYEYAAEYAAAEYAEYAA", "HEYYEYAAEYAAAEYAEYAA");
+        super("HEYYEYAAEYAAAEYAEYAA".toLowerCase(), "HEYYEYAAEYAAAEYAEYAA");
     }
 
     @Override
