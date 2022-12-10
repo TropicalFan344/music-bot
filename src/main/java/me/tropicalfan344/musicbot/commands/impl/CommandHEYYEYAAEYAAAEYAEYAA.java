@@ -34,6 +34,12 @@ public class CommandHEYYEYAAEYAAAEYAEYAA extends MusicCommand {
                     .build()).queue();
         }else {
             manager.joinVoiceChannel(event.getMember().getVoiceState().getChannel());
+            manager.playMusic(YouTubeTrack.getVideoById("QEFWUIjyE9Y"));
+            event.replyEmbeds(new EmbedBuilder()
+                    .setColor(new Color(0x5DFF51))
+                    .setImage("https://i.imgur.com/cBJzJTH.gif")
+                    .setTitle("HEYYEYAAEYAAAEYAEYAA")
+                    .build()).queue();
         }
     }
 }
