@@ -33,7 +33,7 @@ public class CommandGay extends MusicCommand {
                     .build()).queue();
         }else {
             manager.joinVoiceChannel(event.getMember().getVoiceState().getChannel());
-            manager.playMusic(YouTubeTrack.getVideoById("QEFWUIjyE9Y"));
+            manager.playMusic(YouTubeTrack.getVideoById("03MkRR4eGNg"));
             event.replyEmbeds(new EmbedBuilder()
                     .setColor(new Color(0x5DFF51))
                     .setImage("https://media.tenor.com/jOqCTOVBshQAAAAC/idubbbz-youtuber.gif")
