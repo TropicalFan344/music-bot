@@ -12,27 +12,38 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class CommandLoad extends MusicCommand {
     public CommandLoad() {
-        super("load", "Load saved list", new OptionData(OptionType.STRING, "name", "name of list", true));
+        super("load", "Load saved list", new OptionData(OptionType.STRING, "name", "name of list", true), new OptionData(OptionType.STRING, "guildid", "If you want to load the playlist from other guild, please enter the guild ID."));
     }
 
     @Override
     public void onExecute(SlashCommandInteractionEvent event) throws IOException {
         event.deferReply().queue();
-        File list = new File("saves/" + event.getGuild().getId() + ".json");
+        String guildId;
+        if (event.getOption("guildid") != null) {
+            guildId = event.getOption("guildid").getAsString();
+        }else {
+            guildId = event.getGuild().getId();
+        }
+        File list = new File("saves/" + guildId + ".json");
         Gson gson = new Gson();
         String name = event.getOption("name").getAsString();
         GuildMusicManager manager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
 
-        if (!list.exists()) throw new CommandException("There is no saved list on this server. Use /save to save the list");
+        if (!list.exists() && guildId.equals(event.getGuild().getId())) {
+            throw new CommandException("There is no saved list on this guild. Use /save to save current tracks");
+        }else if (!list.exists() && !guildId.equals(event.getGuild().getId())){
+            throw new CommandException("Target guild doesn't exist or no list on that guild");
+        }
 
-        FileReader reader = new FileReader("saves/" + event.getGuild().getId() + ".json");
+        File file = new File("saves/" + guildId + ".json");
+        FileInputStream fis = new FileInputStream(file);
+        InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+        BufferedReader reader = new BufferedReader(isr);
         JsonObject jsonList = gson.fromJson(reader, JsonObject.class);
         reader.close();
 

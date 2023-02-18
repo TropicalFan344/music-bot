@@ -51,10 +51,10 @@ public class CommandPlayPlayList extends MusicCommand {
             playList = new YouTubePlayList(matcher.group(1));
         }
         int size = 0;
-        Track sex = null;
+        Track track = null;
         for (Track playlistTrack : playList.getTracks()) {
-            if (sex == null) {
-                sex = playlistTrack;
+            if (track == null) {
+                track = playlistTrack;
             }
             musicManager.addWithoutRefresh(playlistTrack);
             size++;
@@ -62,8 +62,8 @@ public class CommandPlayPlayList extends MusicCommand {
         while (true) {
             if (playList.getNextPage() != null) {
                 for (Track playlistTrack : playList.getTracks()) {
-                    if (sex == null) {
-                        sex = playlistTrack;
+                    if (track == null) {
+                        track = playlistTrack;
                     }
                     musicManager.addWithoutRefresh(playlistTrack);
                     size++;
@@ -77,7 +77,7 @@ public class CommandPlayPlayList extends MusicCommand {
             event.getHook().editOriginalEmbeds(new EmbedBuilder()
                     .setTitle("Song(s) have been Added")
                     .setDescription("Added playlist " + playList.getTitle() + " (" + size + ") to the queue")
-                    .setImage(sex.getThumbnail())
+                    .setImage(track.getThumbnail())
                     .setColor(SimpleEmbedGenerator.SUCCESS)
                     .build()).queue();
 
