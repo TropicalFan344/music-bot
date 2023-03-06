@@ -10,7 +10,7 @@ import me.tropicalfan344.musicbot.engines.impl.youtube.YouTubeEngine;
 import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -34,8 +34,7 @@ public class CommandPlay extends MusicCommand {
             if (selfVoiceState.inAudioChannel()) {
                 throw new CommandException("The bot is already in a voice channel! Please use /leave before letting it join another.");
             }
-
-            VoiceChannel voiceChannel = ((VoiceChannel) event.getMember().getVoiceState().getChannel());
+            AudioChannel voiceChannel = ((AudioChannel) event.getMember().getVoiceState().getChannel());
             GuildMusicManager.getMusicManager(musicBot, event.getGuild()).joinVoiceChannel(voiceChannel);
         }
         event.getInteraction().deferReply().queue();

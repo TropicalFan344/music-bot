@@ -6,7 +6,6 @@ import me.tropicalfan344.musicbot.commands.impl.CommandEffectsAdd;
 import me.tropicalfan344.musicbot.effects.AudioEffect;
 import me.tropicalfan344.musicbot.effects.AudioEffectsManager;
 import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -86,13 +85,13 @@ public class CommandsManager {
                                 if (throwable instanceof CommandException) {
                                     try {
 
-                                        event.getHook().editOriginal(new MessageBuilder(
+                                        event.getHook().editOriginalEmbeds(
                                                 SimpleEmbedGenerator.generateErrorEmbed(throwable.getMessage())
-                                        ).build()).queue();
+                                        ).queue();
 
-                                        event.getInteraction().reply(new MessageBuilder(
+                                        event.getInteraction().replyEmbeds(
                                                 SimpleEmbedGenerator.generateErrorEmbed(throwable.getMessage())
-                                        ).build()).queue();
+                                        ).queue();
                                     } catch (Throwable e) {
 
                                     }
@@ -100,15 +99,15 @@ public class CommandsManager {
                                     throwable.printStackTrace();
                                     try {
 
-                                        event.getHook().editOriginal(new MessageBuilder(
+                                        event.getHook().editOriginalEmbeds(
                                                 // TODO: Error report system
                                                 SimpleEmbedGenerator.generateErrorEmbed("Something went wrong while handling the command! Error: " + throwable.getMessage())
-                                        ).build()).queue();
+                                        ).queue();
 
-                                        event.getInteraction().reply(new MessageBuilder(
+                                        event.getInteraction().replyEmbeds(
                                                 // TODO: Error report system
                                                 SimpleEmbedGenerator.generateErrorEmbed("Something went wrong while handling the command! Error: " + throwable.getMessage())
-                                        ).build()).queue();
+                                        ).queue();
                                     } catch (Throwable e) {
 
                                     }

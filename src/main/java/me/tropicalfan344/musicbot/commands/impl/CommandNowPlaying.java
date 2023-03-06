@@ -7,7 +7,7 @@ import me.tropicalfan344.musicbot.commands.MusicCommand;
 import me.tropicalfan344.musicbot.engines.Track;
 import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
+
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -50,14 +50,14 @@ public class CommandNowPlaying extends MusicCommand {
             description += "\n" + musicManager.getLoopMode().getEmoji() + "   ◄◄  " + (musicManager.getSendHandler().isPaused()?":arrow_forward:":":pause_button:") + "  ►►  " + time;
 
             Track targetTrack = musicManager.getQueue().get(0);
-            MessageEmbed builder = new EmbedBuilder()
+            MessageEmbed embed = new EmbedBuilder()
                     .setTitle(targetTrack.getTitle(), targetTrack.getUrl())
                     .setAuthor("ɴᴏᴡ ᴘʟᴀʏɪɴɢ:")
                     .setDescription(description)
                     .setThumbnail(targetTrack.getThumbnail())
                     .setColor(SimpleEmbedGenerator.SUCCESS)
                     .build();
-            ReplyCallbackAction reply = event.getInteraction().reply(new MessageBuilder(builder).build());
+            ReplyCallbackAction reply = event.getInteraction().replyEmbeds(embed);
             List<Button> buttons = new ArrayList<>();
             if (musicManager.isPaused()) {
                 buttons.add(Button.primary("status", "▶️"));

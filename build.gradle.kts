@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.dv8tion:JDA:5.0.0-alpha.12")
+    implementation("net.dv8tion:JDA:5.0.0-beta.5")
     implementation("ws.schild:jave-all-deps:3.3.1")
     implementation("com.sedmelluq:lavaplayer:1.3.78")
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
@@ -33,6 +33,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0-M1")
     compileOnly("org.projectlombok:lombok:1.18.24")
     annotationProcessor("org.projectlombok:lombok:1.18.24")
+    compileOnly("org.jetbrains:annotations:24.0.0")
 
 
 

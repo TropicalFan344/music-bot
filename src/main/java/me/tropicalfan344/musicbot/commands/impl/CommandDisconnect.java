@@ -4,8 +4,8 @@ import me.tropicalfan344.musicbot.GuildMusicManager;
 import me.tropicalfan344.musicbot.commands.CommandException;
 import me.tropicalfan344.musicbot.commands.MusicCommand;
 import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.AudioChannel;
+
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
@@ -27,8 +27,8 @@ public class CommandDisconnect extends MusicCommand {
 
         GuildMusicManager.getMusicManager(musicBot, event.getGuild()).disconnectFromVoiceChannel();
         AudioChannel channel = event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).getVoiceState().getChannel();
-        event.getInteraction().reply(
-                new MessageBuilder(SimpleEmbedGenerator.generateSuccessfulEmbed("Successfully disconnected from " + channel.getAsMention() + ", AutoPlay is now **Disabled**")).build()
+        event.getInteraction().replyEmbeds(
+                SimpleEmbedGenerator.generateSuccessfulEmbed("Successfully disconnected from " + channel.getAsMention() + ", AutoPlay is now **Disabled**")
         ).queue();
 
     }
