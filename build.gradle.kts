@@ -29,7 +29,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("com.google.code.gson:gson:2.9.0")
     implementation("org.reflections:reflections:0.10.2")
-    implementation("com.github.psambit9791:jdsp:1.0.0")
+    implementation("com.github.psambit9791:jdsp:2.0.1")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0-M1")
     compileOnly("org.projectlombok:lombok:1.18.24")
     annotationProcessor("org.projectlombok:lombok:1.18.24")
