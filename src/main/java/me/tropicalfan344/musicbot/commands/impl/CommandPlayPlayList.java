@@ -8,7 +8,7 @@ import me.tropicalfan344.musicbot.engines.impl.youtube.YouTubePlayList;
 import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -37,7 +37,7 @@ public class CommandPlayPlayList extends MusicCommand {
                 throw new CommandException("The bot is already in a voice channel! Please use /leave before letting it join another.");
             }
 
-            VoiceChannel voiceChannel = ((VoiceChannel) event.getMember().getVoiceState().getChannel());
+            AudioChannel voiceChannel = ((AudioChannel) event.getMember().getVoiceState().getChannel());
             GuildMusicManager.getMusicManager(musicBot, event.getGuild()).joinVoiceChannel(voiceChannel);
         }
         YouTubePlayList playList;
@@ -51,10 +51,10 @@ public class CommandPlayPlayList extends MusicCommand {
             playList = new YouTubePlayList(matcher.group(1));
         }
         int size = 0;
-        Track sex = null;
+        Track track = null;
         for (Track playlistTrack : playList.getTracks()) {
-            if (sex == null) {
-                sex = playlistTrack;
+            if (track == null) {
+                track = playlistTrack;
             }
             musicManager.addWithoutRefresh(playlistTrack);
             size++;
@@ -62,8 +62,8 @@ public class CommandPlayPlayList extends MusicCommand {
         while (true) {
             if (playList.getNextPage() != null) {
                 for (Track playlistTrack : playList.getTracks()) {
-                    if (sex == null) {
-                        sex = playlistTrack;
+                    if (track == null) {
+                        track = playlistTrack;
                     }
                     musicManager.addWithoutRefresh(playlistTrack);
                     size++;
@@ -77,7 +77,7 @@ public class CommandPlayPlayList extends MusicCommand {
             event.getHook().editOriginalEmbeds(new EmbedBuilder()
                     .setTitle("Song(s) have been Added")
                     .setDescription("Added playlist " + playList.getTitle() + " (" + size + ") to the queue")
-                    .setImage(sex.getThumbnail())
+                    .setImage(track.getThumbnail())
                     .setColor(SimpleEmbedGenerator.SUCCESS)
                     .build()).queue();
 

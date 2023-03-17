@@ -6,7 +6,7 @@ import me.tropicalfan344.musicbot.commands.CommandsManager;
 import me.tropicalfan344.musicbot.engines.Track;
 import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
+
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -89,7 +89,7 @@ public class NowPlayingButtonListener extends ListenerAdapter {
                     .setThumbnail(targetTrack.getThumbnail())
                     .setColor(SimpleEmbedGenerator.SUCCESS)
                     .build();
-            MessageEditCallbackAction reply = event.editMessage(new MessageBuilder(builder).build());
+            MessageEditCallbackAction reply = event.editMessageEmbeds(builder);
             List<Button> buttons = new ArrayList<>();
             if (musicManager.isPaused()) {
                 buttons.add(Button.primary("status", "▶️"));

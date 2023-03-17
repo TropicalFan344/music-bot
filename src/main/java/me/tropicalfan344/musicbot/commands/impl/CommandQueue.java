@@ -7,7 +7,7 @@ import me.tropicalfan344.musicbot.engines.Track;
 import me.tropicalfan344.musicbot.engines.impl.youtube.YouTubeEngine;
 import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
+
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -68,7 +68,7 @@ public class CommandQueue extends MusicCommand {
             }
             builder.setDescription(out);
             builder.setColor(SimpleEmbedGenerator.SUCCESS);
-            ReplyCallbackAction reply = interaction.reply(new MessageBuilder(builder).build());
+            ReplyCallbackAction reply = interaction.replyEmbeds(builder.build());
             if (requestedPage > 1) {
                 reply.addActionRow(Button.primary("goPage:" + (requestedPage - 1), "Previous Page"));
             }

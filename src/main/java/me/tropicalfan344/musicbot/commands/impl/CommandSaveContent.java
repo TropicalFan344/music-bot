@@ -10,16 +10,14 @@ import me.tropicalfan344.musicbot.engines.Track;
 import me.tropicalfan344.musicbot.engines.impl.youtube.YouTubeTrack;
 import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
+
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +39,7 @@ public class CommandSaveContent extends MusicCommand {
 
         if (!list.exists()) throw new CommandException("There is no saved list on this server. Use /save to save the list");
 
-        FileReader reader = new FileReader("saves/" + event.getGuild().getId() + ".json");
+        InputStreamReader reader = new InputStreamReader(new FileInputStream("saves/" + event.getGuild().getId() + ".json"), "UTF-8");
         JsonObject jsonList = gson.fromJson(reader, JsonObject.class);
         reader.close();
 
@@ -82,7 +80,7 @@ public class CommandSaveContent extends MusicCommand {
         builder.setTitle("Songs in list: " + name);
         builder.setDescription(out);
         builder.setColor(SimpleEmbedGenerator.SUCCESS);
-        ReplyCallbackAction reply = event.getInteraction().reply(new MessageBuilder(builder).build());
+        ReplyCallbackAction reply = event.getInteraction().replyEmbeds(builder.build());
         List<Button> buttons = new ArrayList<>();
 
         if (requestedPage > 1) {

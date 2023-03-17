@@ -4,7 +4,7 @@ import me.tropicalfan344.musicbot.GuildMusicManager;
 import me.tropicalfan344.musicbot.engines.Track;
 import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
+
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -51,7 +51,7 @@ public class QueueButtonListener extends ListenerAdapter {
                 }
                 builder.setDescription(out);
                 builder.setColor(SimpleEmbedGenerator.SUCCESS);
-                MessageEditCallbackAction reply = event.editMessage(new MessageBuilder(builder).build());
+                MessageEditCallbackAction reply = event.editMessageEmbeds(builder.build());
                 List<Button> buttons = new ArrayList<>();
 
                 if (requestedPage > 1) {

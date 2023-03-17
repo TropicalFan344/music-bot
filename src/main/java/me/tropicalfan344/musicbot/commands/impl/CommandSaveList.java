@@ -9,9 +9,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +25,7 @@ public class CommandSaveList extends MusicCommand {
         Gson gson = new Gson();
 
         if (!list.exists()) throw new CommandException("There is no saved list on this server. Use /save to save the list");
-        FileReader reader = new FileReader("saves/" + event.getGuild().getId() + ".json");
+        InputStreamReader reader = new InputStreamReader(new FileInputStream("saves/" + event.getGuild().getId() + ".json"), "UTF-8");
         JsonObject jsonList = gson.fromJson(reader, JsonObject.class);
         reader.close();
 

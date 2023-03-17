@@ -69,13 +69,15 @@ public class YouTubePlayList extends PlayList {
                 .getAsJsonObject("title")
                 .getAsJsonArray("runs").get(0).getAsJsonObject()
                 .get("text").getAsString();
-        this.size = Integer.parseInt(response.getAsJsonObject("sidebar")
+        String size = response.getAsJsonObject("sidebar")
                 .getAsJsonObject("playlistSidebarRenderer")
                 .getAsJsonArray("items").get(0).getAsJsonObject()
                 .getAsJsonObject("playlistSidebarPrimaryInfoRenderer")
                 .getAsJsonArray("stats").get(0).getAsJsonObject()
                 .getAsJsonArray("runs").get(0).getAsJsonObject()
-                .get("text").getAsString());
+                .get("text").getAsString();
+        size = size.replace(",", "");
+        this.size = Integer.parseInt(size);
         for (JsonElement content : contents) {
             if (content.getAsJsonObject().getAsJsonObject("playlistVideoRenderer") == null) {
                 continuation = content.getAsJsonObject()

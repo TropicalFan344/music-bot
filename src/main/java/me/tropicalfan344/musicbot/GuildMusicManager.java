@@ -7,12 +7,9 @@ import me.tropicalfan344.musicbot.connection.CTrack;
 import me.tropicalfan344.musicbot.connection.ConnectedClient;
 import me.tropicalfan344.musicbot.effects.AudioEffectsManager;
 import me.tropicalfan344.musicbot.engines.Track;
-import net.dv8tion.jda.api.entities.AudioChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
@@ -28,58 +25,60 @@ public class GuildMusicManager {
     private static boolean initalized = false;
     public static GuildMusicManager getMusicManager(MusicBot musicBot, Guild guild) {
         if (!initalized) {
-            musicBot.getJda().addEventListener(new ListenerAdapter() {
-                @Override
-                public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
-                    GuildMusicManager musicManager = getMusicManager(musicBot, event.getGuild());
-                    AudioManager guildAudioManager = musicManager.getGuildAudioManager();
-                    AudioChannel connectedChannel = guildAudioManager.getConnectedChannel();
-                    if (connectedChannel == event.getChannelJoined()) {
-                        musicManager.updateRPC(event.getMember().getUser());
-                    }
-                }
-
-                @Override
-                public void onGuildVoiceMove(@NotNull GuildVoiceMoveEvent event) {
-                    GuildMusicManager musicManager = getMusicManager(musicBot, event.getGuild());
-                    AudioManager guildAudioManager = musicManager.getGuildAudioManager();
-                    AudioChannel connectedChannel = guildAudioManager.getConnectedChannel();
-                    if (connectedChannel == event.getChannelJoined()) {
-                        musicManager.updateRPC(event.getMember().getUser());
-                    } else if (connectedChannel == event.getChannelLeft()) {
-                        for (ConnectedClient client : musicBot.getConnectionManager().getClientMap().values()) {
-                            if (client.getLinkedUser() == null) {
-                                continue;
-                            }
-                            if (client.getLinkedUser().getIdLong() == event.getMember().getUser().getIdLong()) {
-                                try {
-                                    client.getCommunicationClass().updateStatus(null);
-                                } catch (Exception e) {}
-                            }
-                            return;
-                        }
-                    }
-                }
-
-                @Override
-                public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
-                    GuildMusicManager musicManager = getMusicManager(musicBot, event.getGuild());
-                    AudioManager guildAudioManager = musicManager.getGuildAudioManager();
-                    AudioChannel connectedChannel = guildAudioManager.getConnectedChannel();
-                    if (connectedChannel == event.getChannelLeft()) {
-                        for (ConnectedClient client : musicBot.getConnectionManager().getClientMap().values()) {
-                            if (client.getLinkedUser() == null) {
-                                continue;
-                            }
-                            if (client.getLinkedUser().getIdLong() == event.getMember().getUser().getIdLong()) {
-                                try {
-                                    client.getCommunicationClass().updateStatus(null);
-                                } catch (Exception e) {}
-                            }
-                        }
-                    }
-                }
-            });
+//            musicBot.getJda().addEventListener(new ListenerAdapter() {
+//
+//
+//                @Override
+//                public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
+//                    GuildMusicManager musicManager = getMusicManager(musicBot, event.getGuild());
+//                    AudioManager guildAudioManager = musicManager.getGuildAudioManager();
+//                    AudioChannel connectedChannel = guildAudioManager.getConnectedChannel();
+//                    if (connectedChannel == event.getChannelJoined()) {
+//                        musicManager.updateRPC(event.getMember().getUser());
+//                    }
+//                }
+//
+//                @Override
+//                public void onGuildVoiceMove(@NotNull GuildVoiceMoveEvent event) {
+//                    GuildMusicManager musicManager = getMusicManager(musicBot, event.getGuild());
+//                    AudioManager guildAudioManager = musicManager.getGuildAudioManager();
+//                    AudioChannel connectedChannel = guildAudioManager.getConnectedChannel();
+//                    if (connectedChannel == event.getChannelJoined()) {
+//                        musicManager.updateRPC(event.getMember().getUser());
+//                    } else if (connectedChannel == event.getChannelLeft()) {
+//                        for (ConnectedClient client : musicBot.getConnectionManager().getClientMap().values()) {
+//                            if (client.getLinkedUser() == null) {
+//                                continue;
+//                            }
+//                            if (client.getLinkedUser().getIdLong() == event.getMember().getUser().getIdLong()) {
+//                                try {
+//                                    client.getCommunicationClass().updateStatus(null);
+//                                } catch (Exception e) {}
+//                            }
+//                            return;
+//                        }
+//                    }
+//                }
+//
+//                @Override
+//                public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
+//                    GuildMusicManager musicManager = getMusicManager(musicBot, event.getGuild());
+//                    AudioManager guildAudioManager = musicManager.getGuildAudioManager();
+//                    AudioChannel connectedChannel = guildAudioManager.getConnectedChannel();
+//                    if (connectedChannel == event.getChannelLeft()) {
+//                        for (ConnectedClient client : musicBot.getConnectionManager().getClientMap().values()) {
+//                            if (client.getLinkedUser() == null) {
+//                                continue;
+//                            }
+//                            if (client.getLinkedUser().getIdLong() == event.getMember().getUser().getIdLong()) {
+//                                try {
+//                                    client.getCommunicationClass().updateStatus(null);
+//                                } catch (Exception e) {}
+//                            }
+//                        }
+//                    }
+//                }
+//            });
             initalized = true;
         }
 

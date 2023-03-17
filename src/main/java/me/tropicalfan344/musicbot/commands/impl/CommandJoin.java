@@ -4,9 +4,8 @@ import me.tropicalfan344.musicbot.GuildMusicManager;
 import me.tropicalfan344.musicbot.commands.CommandException;
 import me.tropicalfan344.musicbot.commands.MusicCommand;
 import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
 
@@ -25,11 +24,11 @@ public class CommandJoin extends MusicCommand {
             throw new CommandException("The bot is already in a voice channel! Please use /leave before letting it join another.");
         }
 
-        VoiceChannel voiceChannel = ((VoiceChannel) event.getMember().getVoiceState().getChannel());
+        AudioChannel voiceChannel = ((AudioChannel) event.getMember().getVoiceState().getChannel());
         GuildMusicManager.getMusicManager(musicBot, event.getGuild()).joinVoiceChannel(voiceChannel);
-        event.getInteraction().reply(new MessageBuilder(SimpleEmbedGenerator.generateSuccessfulEmbed(
+        event.getInteraction().replyEmbeds(SimpleEmbedGenerator.generateSuccessfulEmbed(
                 "Successfully joined " + voiceChannel.getAsMention()
-        )).build()).queue();
+        )).queue();
 
     }
 }
