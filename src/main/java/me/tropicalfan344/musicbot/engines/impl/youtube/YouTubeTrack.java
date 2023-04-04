@@ -131,7 +131,7 @@ public class YouTubeTrack extends Track {
         if (!matcher.find()) {
             throw new EngineException("Could not find total length in url!", "URL: " + url);
         }
-        int length = Integer.parseInt(matcher.group(1));
+        long length = Long.parseLong(matcher.group(1));
         String finalCurrentUrl = currentUrl;
         byte[] buffer = new byte[1024*8];
 
@@ -202,11 +202,11 @@ public class YouTubeTrack extends Track {
                 int readIndex = 0;
                 OutputStream outputStream = process.getOutputStream();
                 while (true) {
-                    int remainingBytes = length - readIndex;
+                    long remainingBytes = length - readIndex;
                     if (remainingBytes <= 0) {
                         break;
                     }
-                    int bytesToBeRead = Math.min(32767, remainingBytes);
+                    long bytesToBeRead = Math.min(32767, remainingBytes);
                     URL sendUrl = new URL(finalCurrentUrl + "&range=" + readIndex + "-" + (readIndex + bytesToBeRead - 1));
                     readIndex += bytesToBeRead;
                     InputStream inputStream = sendUrl.openStream();
