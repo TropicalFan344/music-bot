@@ -13,6 +13,10 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -27,7 +31,7 @@ public class CommandPlayPlayList extends MusicCommand {
 
 
     @Override
-    public void onExecute(SlashCommandInteractionEvent event) {
+    public void onExecute(SlashCommandInteractionEvent event) throws URISyntaxException {
         if (!event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).getVoiceState().inAudioChannel()) {
             GuildVoiceState selfVoiceState = event.getGuild().getMemberById(event.getJDA().getSelfUser().getId()).getVoiceState();
             if (!event.getMember().getVoiceState().inAudioChannel()){
@@ -40,15 +44,24 @@ public class CommandPlayPlayList extends MusicCommand {
             AudioChannel voiceChannel = ((AudioChannel) event.getMember().getVoiceState().getChannel());
             GuildMusicManager.getMusicManager(musicBot, event.getGuild()).joinVoiceChannel(voiceChannel);
         }
-        YouTubePlayList playList;
+        YouTubePlayList playList = null;
         event.getInteraction().deferReply().queue();
         GuildMusicManager musicManager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
-        if (event.getOption("query").getAsString().startsWith("PL")) {
-            playList = new YouTubePlayList(event.getOption("query").getAsString());
-        }else {
-            Matcher matcher = pattern.matcher(event.getOption("query").getAsString());
-            matcher.find();
-            playList = new YouTubePlayList(matcher.group(1));
+        String query = event.getOption("query").getAsString();
+        if (query.startsWith("PL") || query.startsWith("RD")) {
+            playList = new YouTubePlayList(query);
+        } else {
+            URI uri = new URI(query);
+            String querys = uri.getQuery();
+            for (String s : querys.split("&")) {
+                if (s.startsWith("=")) {
+                    for (String s1 : s.split("=")) {
+                        if (!s1.startsWith("list")) {
+                            playList = new YouTubePlayList(s1);
+                        }
+                    }
+                }
+            }
         }
         int size = 0;
         Track track = null;

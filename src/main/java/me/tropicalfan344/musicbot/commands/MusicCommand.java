@@ -10,6 +10,7 @@ import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public abstract class MusicCommand {
 
@@ -37,6 +38,6 @@ public abstract class MusicCommand {
 
     }
 
-    public abstract void onExecute(SlashCommandInteractionEvent event) throws IOException;
+    public abstract void onExecute(SlashCommandInteractionEvent event) throws IOException, URISyntaxException;
 
 }
