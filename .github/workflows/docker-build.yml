@@ -6,6 +6,9 @@ on:
       - "*"
   workflow_dispatch: {}
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
 
@@ -32,7 +35,7 @@ jobs:
         with:
           arguments: shadowJar
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag ${{ env.REGISTRY }}/music-bot:$(git rev-parse --short "$GITHUB_SHA")
+        run: docker build . --file Dockerfile --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$(git rev-parse --short "$GITHUB_SHA")
       - name: Push the docker image
-        run: docker build . --file Dockerfile --tag ${{ env.REGISTRY }}/music-bot:$(git rev-parse --short "$GITHUB_SHA")
+        run: docker build . --file Dockerfile --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$(git rev-parse --short "$GITHUB_SHA")
 
