@@ -2,7 +2,7 @@ FROM openjdk:8
 
 ADD . /root/run
 ENV DISCORD_TOKEN=token
-RUN cd /root/run; ./gradlew --console=plain --info shadowJar
+# RUN cd /root/run; ./gradlew --console=plain --info shadowJar
 
 RUN mkdir -p /root/run/run
 
