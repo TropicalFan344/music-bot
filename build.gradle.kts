@@ -35,6 +35,7 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.24")
     annotationProcessor("org.projectlombok:lombok:1.18.24")
     compileOnly("org.jetbrains:annotations:24.0.0")
+    testImplementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0")
 
 
 

