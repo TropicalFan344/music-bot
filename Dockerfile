@@ -8,5 +8,5 @@ RUN mkdir -p /root/run/run
 
 WORKDIR /root/run/run
 RUN apt update
-RUN apt install ffmpeg
+RUN apt install ffmpeg -y
 ENTRYPOINT java -cp /root/run/build/libs/music-bot-1.0-SNAPSHOT-all.jar Main
