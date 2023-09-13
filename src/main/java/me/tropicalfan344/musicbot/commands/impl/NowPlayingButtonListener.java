@@ -49,13 +49,13 @@ public class NowPlayingButtonListener extends ListenerAdapter {
                     break;
             }
             reply(musicManager, event, "\nChanged loop mode to : " + musicManager.getLoopMode().getEmoji() + musicManager.getLoopMode().getName());
-        }else if (event.getButton().getId().equals("skip")) {
+        } else if (event.getButton().getId().equals("previous")) {
+            musicManager.previous();
+            reply(musicManager, event, "\n►► Skipped");
+        } else if (event.getButton().getId().equals("skip")) {
             musicManager.skip();
             reply(musicManager, event, "\n►► Skipped");
-        }else if (event.getButton().getId().equals("shuffle")) {
-            musicManager.shuffle();
-            reply(musicManager, event, "\n\uD83D\uDD00 Shuffled");
-        }else if (event.getButton().getId().equals("refresh")) {
+        } else if (event.getButton().getId().equals("refresh")) {
             reply(musicManager, event, "");
         }
     }
@@ -64,7 +64,8 @@ public class NowPlayingButtonListener extends ListenerAdapter {
         if (musicManager.getSendHandler() == null) {
             throw new CommandException("The bot is not playing any music at the moment");
         }else {
-            int totalLength = musicManager.getQueue().get(0).getLength();
+            int index = musicManager.getIndex();
+            int totalLength = musicManager.getQueue().get(index).getLength();
             //unit:sec
             int currentTime = (int) musicManager.getSendHandler().getTime() / 1000;
             //unit:ms
@@ -81,7 +82,7 @@ public class NowPlayingButtonListener extends ListenerAdapter {
             description += "\n" + musicManager.getLoopMode().getEmoji() + "   ◄◄  " + (musicManager.getSendHandler().isPaused()?":arrow_forward:":":pause_button:") + "  ►►  " + time;
             description += extraDes;
 
-            Track targetTrack = musicManager.getQueue().get(0);
+            Track targetTrack = musicManager.getQueue().get(index);
             MessageEmbed builder = new EmbedBuilder()
                     .setTitle(targetTrack.getTitle(), targetTrack.getUrl())
                     .setAuthor("ɴᴏᴡ ᴘʟᴀʏɪɴɢ:")
@@ -91,6 +92,7 @@ public class NowPlayingButtonListener extends ListenerAdapter {
                     .build();
             MessageEditCallbackAction reply = event.editMessageEmbeds(builder);
             List<Button> buttons = new ArrayList<>();
+            buttons.add(Button.primary("previous", "◄◄"));
             if (musicManager.isPaused()) {
                 buttons.add(Button.primary("status", "▶️"));
             }else {
@@ -98,7 +100,6 @@ public class NowPlayingButtonListener extends ListenerAdapter {
             }
             buttons.add(Button.primary("skip", "►►"));
             buttons.add(Button.primary("loopMode", musicManager.getLoopMode().getEmoji()));
-            buttons.add(Button.primary("shuffle", "\uD83D\uDD00"));
             buttons.add(Button.primary("refresh", "\uD83D\uDDD8"));
             reply.setActionRow(buttons);
             reply.queue();

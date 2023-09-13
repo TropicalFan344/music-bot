@@ -61,7 +61,7 @@ public class CommandQueue extends MusicCommand {
             for (int i = startIndex; i < endIndex; i++) {
                 Track track = manager.getQueue().get(i);
                 out += (i + 1) + ". " + track.getEmbedDisplay();
-                if (i == 0) {
+                if (i == manager.getIndex()) {
                     out += "  <-  **Now Playing**" + "\n";
                 }
                 out += "\n";

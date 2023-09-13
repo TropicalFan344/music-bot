@@ -3,6 +3,7 @@ package me.tropicalfan344.musicbot;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import me.tropicalfan344.musicbot.commands.CommandException;
 import me.tropicalfan344.musicbot.connection.CTrack;
 import me.tropicalfan344.musicbot.connection.ConnectedClient;
 import me.tropicalfan344.musicbot.effects.AudioEffectsManager;
@@ -22,66 +23,7 @@ public class GuildMusicManager {
     private static final Map<String, GuildMusicManager> musicManagers = new HashMap<>();
 
 
-    private static boolean initalized = false;
     public static GuildMusicManager getMusicManager(MusicBot musicBot, Guild guild) {
-        if (!initalized) {
-//            musicBot.getJda().addEventListener(new ListenerAdapter() {
-//
-//
-//                @Override
-//                public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
-//                    GuildMusicManager musicManager = getMusicManager(musicBot, event.getGuild());
-//                    AudioManager guildAudioManager = musicManager.getGuildAudioManager();
-//                    AudioChannel connectedChannel = guildAudioManager.getConnectedChannel();
-//                    if (connectedChannel == event.getChannelJoined()) {
-//                        musicManager.updateRPC(event.getMember().getUser());
-//                    }
-//                }
-//
-//                @Override
-//                public void onGuildVoiceMove(@NotNull GuildVoiceMoveEvent event) {
-//                    GuildMusicManager musicManager = getMusicManager(musicBot, event.getGuild());
-//                    AudioManager guildAudioManager = musicManager.getGuildAudioManager();
-//                    AudioChannel connectedChannel = guildAudioManager.getConnectedChannel();
-//                    if (connectedChannel == event.getChannelJoined()) {
-//                        musicManager.updateRPC(event.getMember().getUser());
-//                    } else if (connectedChannel == event.getChannelLeft()) {
-//                        for (ConnectedClient client : musicBot.getConnectionManager().getClientMap().values()) {
-//                            if (client.getLinkedUser() == null) {
-//                                continue;
-//                            }
-//                            if (client.getLinkedUser().getIdLong() == event.getMember().getUser().getIdLong()) {
-//                                try {
-//                                    client.getCommunicationClass().updateStatus(null);
-//                                } catch (Exception e) {}
-//                            }
-//                            return;
-//                        }
-//                    }
-//                }
-//
-//                @Override
-//                public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
-//                    GuildMusicManager musicManager = getMusicManager(musicBot, event.getGuild());
-//                    AudioManager guildAudioManager = musicManager.getGuildAudioManager();
-//                    AudioChannel connectedChannel = guildAudioManager.getConnectedChannel();
-//                    if (connectedChannel == event.getChannelLeft()) {
-//                        for (ConnectedClient client : musicBot.getConnectionManager().getClientMap().values()) {
-//                            if (client.getLinkedUser() == null) {
-//                                continue;
-//                            }
-//                            if (client.getLinkedUser().getIdLong() == event.getMember().getUser().getIdLong()) {
-//                                try {
-//                                    client.getCommunicationClass().updateStatus(null);
-//                                } catch (Exception e) {}
-//                            }
-//                        }
-//                    }
-//                }
-//            });
-            initalized = true;
-        }
-
         GuildMusicManager cached = musicManagers.get(guild.getId());
         if (cached == null) {
             cached = new GuildMusicManager(musicBot, guild);
@@ -95,6 +37,8 @@ public class GuildMusicManager {
     private final List<Track> queue = new ArrayList<>();
 
     @Getter private Track lastTrack = null;
+
+    @Getter @Setter private int index = 0;
 
     @Getter private List<Track> lastTrackOP = new ArrayList<>();
 
@@ -120,29 +64,6 @@ public class GuildMusicManager {
 
     }
 
-    public void updateRPC(User user) {
-        if (getGuildAudioManager().getConnectedChannel() != null) {
-            for (ConnectedClient client : musicBot.getConnectionManager().getClientMap().values()) {
-                if (client.getLinkedUser() == null) {
-                    continue;
-                }
-                if (client.getLinkedUser().getIdLong() == user.getIdLong()) {
-                    if (getQueue().size() >= 1) {
-                        Track nowPlaying = getQueue().get(0);
-                        try {
-                            client.getCommunicationClass().updateStatus(new CTrack(nowPlaying.getTitle(), nowPlaying.getArtist(), nowPlaying.getThumbnail(), nowPlaying.getUrl(), nowPlaying.getLength()));
-                        } catch (Exception e) {}
-                    } else {
-                        try {
-                            client.getCommunicationClass().updateStatus(null);
-                        } catch (Exception e) {}
-                    }
-                    return;
-                }
-            }
-        }
-    }
-
     public AudioManager getGuildAudioManager() {
         return getGuild().getAudioManager();
     }
@@ -163,82 +84,44 @@ public class GuildMusicManager {
             return false;
         }
         if (loopMode == LoopMode.OFF) {
-            queue.remove(0); // Remove the first one
-        }
-        if (loopMode == LoopMode.SINGLE) {
-            if (skip) {
-                queue.add(queue.remove(0)); // Remove the first one, and add it to the bottom of the queue
-            } else {
-                // Do nothing so it will play the same fucking song
+            if(index < queue.size()-1) {
+                index++;
             }
         }
+        if (loopMode == LoopMode.SINGLE) {
+
+        }
         if (loopMode == LoopMode.ALL) {
-            queue.add(queue.remove(0)); // Remove the first one, and add it to the bottom of the queue
+            index = index % queue.size();
         }
         return true;
     }
 
     public void refreshQueue(boolean force) {
         if (force) {
-            if (getGuildAudioManager().getConnectedChannel() != null) {
-                for (ConnectedClient client : musicBot.getConnectionManager().getClientMap().values()) {
-                    if (client.getLinkedUser() == null) {
-                        continue;
-                    }
-                    if (getGuildAudioManager().getConnectedChannel().getMembers().stream().anyMatch(member -> member.getUser().getIdLong() == client.getLinkedUser().getIdLong())) {
-                        try {
-                            client.getCommunicationClass().updateStatus(null);
-                        } catch (Exception e) {}
-                    }
-                }
-            }
             sendHandler.closeWithoutRefreshingThisStupidGodDamnFuckingPieceOfShit();
             sendHandler = null;
         }
         if (sendHandler == null) {
             if (!queue.isEmpty()) {
-                Track nowPlaying = queue.get(0);
+                Track nowPlaying = queue.get(index);
 
-                if (getGuildAudioManager().getConnectedChannel() != null) {
-                    for (ConnectedClient client : musicBot.getConnectionManager().getClientMap().values()) {
-                        if (client.getLinkedUser() == null) {
-                            continue;
-                        }
-                        if (getGuildAudioManager().getConnectedChannel().getMembers().stream().anyMatch(member -> member.getUser().getIdLong() == client.getLinkedUser().getIdLong())) {
-                            try {
-                                client.getCommunicationClass().updateStatus(new CTrack(nowPlaying.getTitle(), nowPlaying.getArtist(), nowPlaying.getThumbnail(), nowPlaying.getUrl(), nowPlaying.getLength()));
-                            } catch (Exception ignored) {}
-                        }
-                    }
-                }
 
-                sendHandler = new TrackSendHandler(queue.get(0), this, () -> {
+                sendHandler = new TrackSendHandler(nowPlaying, this, () -> {
                     nextSong(false);
                     refreshQueue(true);
                 });
                 getGuildAudioManager().setSendingHandler(sendHandler);
             }
         } else {
-            if (queue.isEmpty() || sendHandler.getTrack() != queue.get(0)) {
-                if (getGuildAudioManager().getConnectedChannel() != null) {
-                    for (ConnectedClient client : musicBot.getConnectionManager().getClientMap().values()) {
-                        if (client.getLinkedUser() == null) {
-                            continue;
-                        }
-                        if (getGuildAudioManager().getConnectedChannel().getMembers().stream().anyMatch(member -> member.getUser().getIdLong() == client.getLinkedUser().getIdLong())) {
-                            try {
-                                client.getCommunicationClass().updateStatus(null);
-                            } catch (Exception e) {}
-                        }
-                    }
-                }
+            if (queue.isEmpty() || sendHandler.getTrack() != queue.get(index)) {
                 sendHandler.closeWithoutRefreshingThisStupidGodDamnFuckingPieceOfShit();
                 sendHandler = null;
                 refreshQueue(false);
                 getGuildAudioManager().setSendingHandler(sendHandler);
             }
         }
-        if(queue.size() == 0 && isAutoPlay) {
+        if(index == queue.size()-1 && isAutoPlay && loopMode == LoopMode.ALL) {
             lastTrackOP.addAll(lastTrack.openRadio());
             lastTrackOP.remove(0);
             queue.addAll(lastTrackOP);
@@ -250,6 +133,9 @@ public class GuildMusicManager {
 
     public void remove(@Range(from = 0, to = Long.MAX_VALUE) int index) {
         queue.remove(Math.min(index, queue.size() - 1));
+        if (index < this.index) {
+            this.index--;
+        }
         lastTrack = getQueue().get(getQueue().size()-1);
         refreshQueue(false);
     }
@@ -302,6 +188,20 @@ public class GuildMusicManager {
 
     public void skip() {
         nextSong(true);
+        refreshQueue(true);
+    }
+
+    public void seek(int second) {
+        if (second < this.getQueue().get(index).getLength()) {
+            sendHandler.seek(second);
+        }else {
+            throw new CommandException("Hey, you can't go there because it doesn't exist in this song.");
+        }
+    }
+
+
+    public void previous() {
+        index = Math.max(0, index - 1);
         refreshQueue(true);
     }
 

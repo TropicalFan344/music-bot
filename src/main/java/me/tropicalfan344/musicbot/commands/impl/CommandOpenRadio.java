@@ -20,7 +20,8 @@ public class CommandOpenRadio extends MusicCommand {
     @Override
     public void onExecute(SlashCommandInteractionEvent event) {
         GuildMusicManager musicManager = GuildMusicManager.getMusicManager(musicBot, event.getGuild());
-        Track nowPlaying = musicManager.getQueue().get(0);
+        int index = musicManager.getIndex();
+        Track nowPlaying = musicManager.getQueue().get(index);
         if (nowPlaying == null) {
             throw new CommandException("There is nothing in the queue");
         }
@@ -29,10 +30,10 @@ public class CommandOpenRadio extends MusicCommand {
             musicManager.add(track);
         }
         String des = "";
-        int index = 1;
+        int i = 1;
         for (Track track : tracks) {
-            des += index + ". " + track.getEmbedDisplay() + "\n";
-            index++;
+            des += i + ". " + track.getEmbedDisplay() + "\n";
+            i++;
         }
         event.getInteraction().replyEmbeds(new EmbedBuilder()
                 .setTitle("Added " + (tracks.size()-1) +  " song(s) to queue")

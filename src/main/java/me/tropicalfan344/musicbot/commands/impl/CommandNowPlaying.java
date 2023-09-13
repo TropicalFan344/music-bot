@@ -32,7 +32,8 @@ public class CommandNowPlaying extends MusicCommand {
         if (musicManager.getQueue().size() == 0) {
             throw new CommandException("The bot is not playing any music at the moment");
         }else {
-            int totalLength = musicManager.getQueue().get(0).getLength();
+            int index = musicManager.getIndex();
+            int totalLength = musicManager.getQueue().get(index).getLength();
             //unit:sec
             int currentTime = (int) musicManager.getSendHandler().getTime() / 1000;
             //unit:ms
@@ -49,7 +50,7 @@ public class CommandNowPlaying extends MusicCommand {
 
             description += "\n" + musicManager.getLoopMode().getEmoji() + "   ◄◄  " + (musicManager.getSendHandler().isPaused()?":arrow_forward:":":pause_button:") + "  ►►  " + time;
 
-            Track targetTrack = musicManager.getQueue().get(0);
+            Track targetTrack = musicManager.getQueue().get(index);
             MessageEmbed embed = new EmbedBuilder()
                     .setTitle(targetTrack.getTitle(), targetTrack.getUrl())
                     .setAuthor("ɴᴏᴡ ᴘʟᴀʏɪɴɢ:")
@@ -59,6 +60,7 @@ public class CommandNowPlaying extends MusicCommand {
                     .build();
             ReplyCallbackAction reply = event.getInteraction().replyEmbeds(embed);
             List<Button> buttons = new ArrayList<>();
+            buttons.add(Button.primary("previous", "◄◄"));
             if (musicManager.isPaused()) {
                 buttons.add(Button.primary("status", "▶️"));
             }else {
@@ -66,7 +68,6 @@ public class CommandNowPlaying extends MusicCommand {
             }
             buttons.add(Button.primary("skip", "►►"));
             buttons.add(Button.primary("loopMode", musicManager.getLoopMode().getEmoji()));
-            buttons.add(Button.primary("shuffle", "\uD83D\uDD00"));
             buttons.add(Button.primary("refresh", "\uD83D\uDDD8"));
             reply.addActionRow(buttons);
             reply.queue();
