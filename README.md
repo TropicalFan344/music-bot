@@ -1,0 +1,1 @@
+A simple music bot, need to be updated to have access to Youtube's resourses. Youtube implemented a new checking method recently, planing to read [yt-dlp](https://github.com/yt-dlp/yt-dlp)'s sourse code to improve the bot.
